@@ -6,7 +6,7 @@ function FilmSearchComponent(props) {
   
     const searchFilm = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/films/${title}`);
+        const response = await fetch(`http://localhost:8080/api/films/${title}`);
         if (response.ok) {
           const data = await response.json();
           setFilm(data);
