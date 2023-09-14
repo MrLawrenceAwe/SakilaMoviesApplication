@@ -1,0 +1,19 @@
+div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+.select__control {
+    width: 200px;
+}
+  
+  
+
+
+
+
+
+
+
+
