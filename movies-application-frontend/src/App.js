@@ -26,6 +26,14 @@ function App() {
       <AddFilmForm onFilmSubmit={handleFilmSubmit} />
       <hr />
       {/* Error Message */}
+      <CollapsibleSection label="Add Film">
+        <AddFilmForm onFilmSubmit={handleFilmSubmit} />
+        <hr />
+      </CollapsibleSection>
+      <CollapsibleSection label="Add Actor">
+        <AddActorForm />
+      </CollapsibleSection>
+      <hr />
       {error && <p className="error">{error}</p>}
     </div>
   );
