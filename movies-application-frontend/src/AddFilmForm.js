@@ -18,12 +18,6 @@ const FilmForm = ({ onFilmSubmit }) => {
       });
 
     const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];
-    const specialFeaturesOptions = [
-        { value: 'Trailers', label: 'Trailers' },
-        { value: 'Commentaries', label: 'Commentaries' },
-        { value: 'Deleted Scenes', label: 'Deleted Scenes' },
-        { value: 'Behind the Scenes', label: 'Behind the Scenes' }
-    ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,16 +26,7 @@ const FilmForm = ({ onFilmSubmit }) => {
             [name]: value
         }));
     }
-
-    const handleSelectChange = (event) => {
-        const values = event.target.value;  
-        setFilmData(prev => ({
-            ...prev,
-            specialFeatures: values
-        }));
-    };
     
-
     const handleSubmit = () => {
         onFilmSubmit(filmData);
         setFilmData({});
@@ -101,38 +86,10 @@ const FilmForm = ({ onFilmSubmit }) => {
                 fullWidth 
                 type="number" 
                 variant="outlined" 
-                name="rentalDuration" 
-                label="Rental Duration" 
-                onChange={handleChange} 
-                value={filmData.rentalDuration || ''} 
-                sx={{ marginTop: 2 }}
-            />
-            <TextField 
-                fullWidth 
-                variant="outlined" 
-                name="rentalRate" 
-                label="Rental Rate" 
-                onChange={handleChange} 
-                value={filmData.rentalRate || ''} 
-                sx={{ marginTop: 2 }}
-            />
-            <TextField 
-                fullWidth 
-                type="number" 
-                variant="outlined" 
                 name="length" 
                 label="Length" 
                 onChange={handleChange} 
                 value={filmData.length || ''} 
-                sx={{ marginTop: 2 }}
-            />
-            <TextField 
-                fullWidth 
-                variant="outlined" 
-                name="replacementCost" 
-                label="Replacement Cost" 
-                onChange={handleChange} 
-                value={filmData.replacementCost || ''} 
                 sx={{ marginTop: 2 }}
             />
             <Select
@@ -145,21 +102,6 @@ const FilmForm = ({ onFilmSubmit }) => {
                 {ratings.map(rating => (
                     <MenuItem key={rating} value={rating}>
                         {rating}
-                    </MenuItem>
-                ))}
-            </Select>
-            <Select 
-                multiple
-                name="specialFeatures"
-                className='specialFeatures'
-                value={filmData.specialFeatures || []}
-                placeholder="Select Special Features"
-                onChange={(event) => handleSelectChange(event)}
-                sx={{ marginTop: 2 }}
-            >
-                {specialFeaturesOptions.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
                     </MenuItem>
                 ))}
             </Select>
