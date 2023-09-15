@@ -1,14 +1,13 @@
 import React from 'react';
 import './App.css';
-import FilmSearchComponent from './FilmSearchComponent';
-import FilmAddComponent from './FilmAddComponent';
+import FilmList from './FilmList';
 
 function App() {
   return (
     <div className="App">
-      <h1>Movies Application</h1>
-      <FilmSearchComponent />
-      <FilmAddComponent />
+      <h1>Sakila Movies</h1>
+      <hr/>
+      <FilmList />
     </div>
   );
 }
