@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import './App.css';
-import FilmList from './FilmList';
+import FilmList from './FilmActorList';
 import AddFilmForm from './AddFilmForm';
 import { filmAPIClient } from './APIClients/filmAPIClient';
 import CollapsibleSection from './CollapsibleSection';
 import AddActorForm from './AddActorForm';
-import { Button, TextField, Typography, Box } from '@mui/material';
+import { Button, TextField, Box } from '@mui/material';
 
 
 function App() {
@@ -40,24 +40,30 @@ function App() {
       <hr/>
       {/* Search Film By Title */}
       <Box sx={{ marginBottom: 3 }}>
-          <Typography variant="h6">Search Film</Typography>
-          <TextField 
-              variant="outlined" 
-              fullWidth 
-              value={title} 
-              onChange={handleTitleChange} 
-              label="Search film by title"
-          />
-          <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={searchFilm} 
-              sx={{ marginTop: 2 }}>
-              Search
-          </Button>
+          <form 
+              onSubmit={(e) => {
+                  e.preventDefault(); 
+                  searchFilm();
+              }}
+          >
+              <TextField 
+                  variant="outlined" 
+                  fullWidth 
+                  value={title} 
+                  onChange={handleTitleChange} 
+                  label="Titles, actors"
+              />
+              <Button 
+                  variant="contained" 
+                  color="primary" 
+                  onClick={searchFilm} 
+                  sx={{ marginTop: 2 }}
+                  type="submit">
+                  Search
+              </Button>
+          </form>
       </Box>
-      <FilmList films={films} onSearch={searchFilm} />
-      <AddFilmForm onFilmSubmit={handleFilmSubmit} />
+      <FilmList films={films}/>
       <hr />
       {/* Error Message */}
       <CollapsibleSection label="Add Film">
