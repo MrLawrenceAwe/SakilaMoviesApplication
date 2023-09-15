@@ -21,6 +21,24 @@ const FilmForm = ({ onSubmit }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        switch (name) {
+            case "title":
+                if (value.length > 100) return; 
+                break;
+            case "description":
+                if (value.length > 1000) return; 
+                break;
+            case "length":
+                if (isNaN(value) || value < 0) return;
+                break;
+            case "rating":
+                if (!ratings.includes(value)) return;
+                break;
+            default:
+                break;
+        }
+
         setFilmData(prev => ({
             ...prev,
             [name]: value
