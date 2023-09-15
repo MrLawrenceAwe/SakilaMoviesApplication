@@ -45,7 +45,7 @@ public class APIController {
         StringJoiner valueTokens = new StringJoiner(", ");
         Map<String, Object> fieldMap = new HashMap<>();
 
-        fieldMap.put("title", film.getTitle());
+        fieldMap.put("title", film.getTitle().toUpperCase());
         fieldMap.put("description", film.getDescription());
         fieldMap.put("release_year", film.getReleaseYear());
         fieldMap.put("language_id", film.getLanguageId()); //TODO - Write a method to get the language id from the language name

@@ -18,13 +18,14 @@ function App() {
   }
 
   const searchFilm = () => {
-      filmAPIClient.getFilmByTitle(title)
-        .then(film => {
-            setFilms([film]);  
-              setError(null);
-        })
-        .catch(error => setError(error.message));
-    }
+    if (title === '') return;
+    filmAPIClient.getFilmByTitle(title)
+      .then(film => {
+          setFilms([film]);  
+          setError(null);
+      })
+      .catch(error => setError(error.message));
+  }
 
   const handleFilmSubmit = (newFilm) => {
     filmAPIClient.createFilm(newFilm)
