@@ -23,7 +23,7 @@ public class APIController {
 
 
     @Autowired
-    public APIController(DatabaseClient databaseClient, TemplateService templateService) {
+    public APIController(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
     }
 
