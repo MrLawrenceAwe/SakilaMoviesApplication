@@ -21,15 +21,6 @@ const FilmList = () => {
             .catch(error => setError(error.message));
     }
 
-    const handleFilmSubmit = (newFilm) => {
-        filmAPIClient.createFilm(newFilm)
-            .then(film => {
-                setFilms(prev => [...prev, film]);
-                setError(null);
-            })
-            .catch(error => setError(error.message));
-    }
-
     return (
         <div>
             {/* Search Film By Title */}
@@ -63,13 +54,6 @@ const FilmList = () => {
             </div>
     
             <hr />
-    
-            <FilmForm onFilmSubmit={handleFilmSubmit} />
-    
-            <hr />
-    
-            {/* Error Message */}
-            {error && <p className="error">{error}</p>}
         </div>
     );
 }
