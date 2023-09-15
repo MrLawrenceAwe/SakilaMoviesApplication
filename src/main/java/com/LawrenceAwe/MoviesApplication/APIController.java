@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class APIController {
 
     private final DatabaseClient databaseClient;
-
 
     @Autowired
     public APIController(DatabaseClient databaseClient) {
@@ -40,7 +38,7 @@ public class APIController {
     }
 
     @PostMapping("/films/add")
-    public ResponseEntity<String> createFilm(@RequestBody Film film) {
+    public ResponseEntity<String> addFilmToDatabase(@RequestBody Film film) {
         StringJoiner fields = new StringJoiner(", ");
         StringJoiner valueTokens = new StringJoiner(", ");
         Map<String, Object> fieldMap = new HashMap<>();
@@ -67,10 +65,10 @@ public class APIController {
             }
         }
 
-        String SQL = String.format("INSERT INTO film (%s) VALUES (%s)", fields, valueTokens);
+        String sqlStatement = String.format("INSERT INTO film (%s) VALUES (%s)", fields, valueTokens);
 
         try {
-            databaseClient.updateDatabase(SQL, params);
+            databaseClient.updateDatabase(sqlStatement, params);
             System.out.println("Film created successfully");
             return ResponseEntity.status(HttpStatus.CREATED)
                     .contentType(MediaType.APPLICATION_JSON)
