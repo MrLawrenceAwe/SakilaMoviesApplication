@@ -4,6 +4,7 @@ import com.LawrenceAwe.MoviesApplication.DataTransferObjects.Film;
 import com.LawrenceAwe.MoviesApplication.Services.FilmService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,11 +72,15 @@ public class APIController {
         try {
             databaseClient.updateDatabase(SQL, params);
             System.out.println("Film created successfully");
-            return new ResponseEntity<>("Film created successfully", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Film created successfully\"}");
         } catch (DataAccessException e) {
             System.out.println("Failed to create film");
             System.out.println(e.getMessage());
-            return new ResponseEntity<>("Failed to create film", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Failed to create film\"}");
         }
     }
 }
