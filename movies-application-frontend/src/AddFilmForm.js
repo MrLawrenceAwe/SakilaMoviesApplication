@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './AddFilmForm.css'
 import { TextField, Button, Typography, Box, Select, MenuItem } from '@mui/material';
 
-const FilmForm = ({ onFilmSubmit }) => {
+const FilmForm = ({ onSubmit }) => {
     const [filmData, setFilmData] = useState({
         title: null,
         description: null,
@@ -28,7 +28,7 @@ const FilmForm = ({ onFilmSubmit }) => {
     }
     
     const handleSubmit = () => {
-        onFilmSubmit(filmData);
+        onSubmit(filmData);
         setFilmData({});
     }
 

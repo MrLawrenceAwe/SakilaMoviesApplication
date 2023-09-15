@@ -12,7 +12,7 @@ function App() {
   const [films, setFilms] = useState([]);
   const [error, setError] = useState(null);
 
-  const handleFilmSubmit = (newFilm) => {
+  const handleAddFilmFormSubmit = (newFilm) => {
     filmAPIClient.createFilm(newFilm)
         .then(film => {
             setError(null);
@@ -35,7 +35,7 @@ function App() {
       <hr />
       {/* Error Message */}
       <CollapsibleSection label="Add Film">
-        <AddFilmForm onFilmSubmit={handleFilmSubmit} />
+        <AddFilmForm onSubmit={handleAddFilmFormSubmit} />
         <hr />
       </CollapsibleSection>
       <CollapsibleSection label="Add Actor">
