@@ -4,6 +4,7 @@ export const filmAPIClient = {
     
     getFilmByTitle: async (title) => {
         try {
+            title = encodeURIComponent(title);
             const response = await fetch(`${BASE_URL}/films/${title}`);
             // Check if response status is OK
             if (!response.ok) {

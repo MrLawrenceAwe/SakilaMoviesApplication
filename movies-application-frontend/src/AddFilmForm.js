@@ -8,13 +8,8 @@ const FilmForm = ({ onSubmit }) => {
         description: null,
         releaseYear: null,
         languageId: null,
-        originalLanguageId: null,
-        rentalDuration: null, 
-        rentalRate: null, 
         length: null,
-        replacementCost: null,
         rating: null,
-        specialFeatures: []
       });
 
     const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];

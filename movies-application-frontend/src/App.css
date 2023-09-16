@@ -62,8 +62,130 @@ hr {
 .film-item h3 {
   margin-top: 0;
   margin-bottom: 15px;
+  cursor: pointer; 
+  transition: color 0.3s; 
 }
 
 .film-item p {
   margin: 0;
+}
+
+.film-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit-film-btn, .delete-film-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.edit-film-btn:hover {
+  color: #007bff;
+}
+
+.delete-film-btn:hover {
+  color: #dc3545;
+}
+
+#add-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 80%;
+  min-width: 40%;     
+  max-height: 80%;
+  min-height: 40%;    
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+}
+
+.film-item h3:hover {
+  color: blue; 
+  text-decoration: underline; 
+}
+
+
+
+/* Editor Modal */
+
+.editable-field {
+  display: flex;
+  align-items: center; 
+  margin-bottom: 8px; 
+}
+
+.field-label,
+.field-value {
+  margin-right: 8px; /* space between label/value and the edit button */
+}
+
+.field-input {
+  /* styles for the input when editing */
+  margin-right: 8px; /* space between input field and the edit button */
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  padding: 4px; 
+  cursor: pointer;
+  font-size: 12px; /* changes the size of the icon */
+  display: inline-flex; /* ensures the button doesn't occupy more space than needed */
+  color: #333;
+}
+
+.edit-button:focus {
+  outline: none;
+}
+
+.edit-button:hover {
+  color: #fff;
+}
+
+.save-button,
+.cancel-button {
+    background-color: #f0f0f0;
+    border: none;
+    margin-left: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.save-button:hover {
+    background-color: #d4d4d4;
+}
+
+.cancel-button:hover {
+    background-color: #d4d4d4;
+}
+
+.save-button:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
 }

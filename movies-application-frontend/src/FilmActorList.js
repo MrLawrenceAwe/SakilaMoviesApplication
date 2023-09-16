@@ -1,4 +1,22 @@
-const FilmActorList = ({ films, actors }) => {
+import React, { useState } from 'react';
+import Modal from './Modal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import EditableField from './EditableField';
+
+const FilmActorList = ({ films, actors, onFilmUpdate }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [currentFilm, setCurrentFilm] = useState(null);
+
+    const handleFilmTitleClick = film => {
+        setCurrentFilm(film);
+        setShowModal(true);
+    }
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    }
+
     return (
         <div>
             {/* List of Films */}
@@ -7,10 +25,16 @@ const FilmActorList = ({ films, actors }) => {
                     <h2>Films</h2>
                     {films.map(film => (
                         <div key={film.film_id} className="film-item">
-                            <h3>{film.title}</h3>
+                            <h3 onClick={() => handleFilmTitleClick(film)}>{film.title}</h3>
                             <p>{film.description}</p>
+                            <div className="film-actions">
+                            <button className="delete-film-btn">
+                                <FontAwesomeIcon icon={faTrash} /> Delete
+                            </button>
                         </div>
-                    ))}
+                    </div>
+                ))}
+
                 </div>
             )}
             
@@ -29,6 +53,25 @@ const FilmActorList = ({ films, actors }) => {
                     ))}
                 </div>
             )}
+
+            <Modal show={showModal} onClose={handleCloseModal}>
+                {currentFilm && (
+                    <>
+                        <h3>{currentFilm.title}</h3>
+                        <EditableField 
+                            label="Title" 
+                            value={currentFilm.title} 
+                            onChange={newTitle => setCurrentFilm({ ...currentFilm, title: newTitle })}
+                        />
+                        <EditableField 
+                            label="Description" 
+                            value={currentFilm.description} 
+                            onChange={newDesc => setCurrentFilm({ ...currentFilm, description: newDesc })}
+                        />
+                        {/* Add more fields as needed */}
+                    </>
+                )}
+            </Modal>
         </div>
     );
 }
