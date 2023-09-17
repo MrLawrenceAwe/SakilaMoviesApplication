@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,26 @@ public class APIController {
                     .body("{\"message\":\"No results found\"}");
         }
 
+    }
+
+    @GetMapping("/films/{categoryName}")
+    public ResponseEntity<?> getFilmsByCategory(@PathVariable String categoryName) {
+        // SQL query to fetch films by category
+        String sql = "SELECT f.film_id, f.title, f.description " +
+                "FROM film f " +
+                "JOIN film_category fc ON f.film_id = fc.film_id " +
+                "JOIN category c ON fc.category_id = c.category_id " +
+                "WHERE LOWER(c.name) = LOWER(?)";
+
+        List<Film> films = databaseClient.queryForList(sql, new Object[]{categoryName}, FilmService::mapRowToFilm);
+
+        if (!films.isEmpty()) {
+            return ResponseEntity.ok(films);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"No results found\"}");
+        }
     }
 
     @PostMapping("/films/add")
