@@ -34,5 +34,25 @@ export const filmAPIClient = {
             console.error(error);
             throw error;
         }
+    },
+
+    updateFilm: async (filmId, changes) => {
+        try {
+            const response = await fetch(`${BASE_URL}/films/update/${filmId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changes)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to edit film');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
+    
 }

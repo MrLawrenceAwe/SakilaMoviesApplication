@@ -189,3 +189,13 @@ hr {
   background-color: #f0f0f0;
   cursor: not-allowed;
 }
+
+.feedback-message {
+  margin-top: 10px;
+  font-weight: bold;
+  color: green; /* For success messages; you might want to set a different color for error messages */
+}
+
+#save-button {
+  margin-right: 10px;
+}
