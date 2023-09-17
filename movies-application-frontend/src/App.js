@@ -15,21 +15,15 @@ function App() {
   const [error, setError] = useState(null);
   const [lastSearchQuery, setLastSearchQuery] = useState(null);
 
-
-  const handleAddFilmFormSubmit = (newFilm) => {
-    FilmAPIClient.createFilm(newFilm)
-        .then(film => {
-            setError(null);
-        })
-        .catch(error => setError(error.message));
-  }
-
   function search(searchQuery) {
     FilmAPIClient.getFilmByTitle(searchQuery)
         .then(responseFilms => {
             handleSearch(responseFilms, searchQuery)
         })
-        .catch(error => setError(error.message));
+        .catch(error => { 
+          setFilms([]);
+          setError(error.message)
+        });
   }
 
   const handleSearch = (responseFilms, searchQuery) => {
@@ -45,11 +39,11 @@ function App() {
       <hr/>
       {/* Search*/}
       <SearchForm onSearch={search} />
-      <FilmActorList films={films} onChangesSave={search} lastSearchQuery={lastSearchQuery}/>
+      <FilmActorList films={films} onUpdate={search} lastSearchQuery={lastSearchQuery}/>
       <hr />
       {/* Error Message */}
       <CollapsibleSection label="Add Film">
-        <AddFilmForm onSubmit={handleAddFilmFormSubmit} />
+        <AddFilmForm />
         <hr />
       </CollapsibleSection>
       <CollapsibleSection label="Add Actor">

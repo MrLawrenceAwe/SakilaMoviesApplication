@@ -6,11 +6,15 @@ export const FilmAPIClient = {
         try {
             title = encodeURIComponent(title);
             const response = await fetch(`${BASE_URL}/films/${title}`);
-            // Check if response status is OK
+            
+            const responseBody = await response.json();
+            
             if (!response.ok) {
-                throw new Error('Failed to fetch film by title');
+                const errorMessage = responseBody.message || 'Failed to fetch film by title';
+                throw new Error(errorMessage);
             }
-            return await response.json();
+            
+            return responseBody;
         } catch (error) {
             console.error(error);
             throw error;

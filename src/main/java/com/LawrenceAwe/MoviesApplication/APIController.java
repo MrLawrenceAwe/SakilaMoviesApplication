@@ -26,15 +26,18 @@ public class APIController {
     }
 
     @GetMapping("/films/{title}")
-    public ResponseEntity<Film> getFilmByTitle(@PathVariable String title) {
+    public ResponseEntity<?> getFilmByTitle(@PathVariable String title) {
         String sql = "SELECT film_id, title, description FROM film WHERE LOWER(title) = LOWER(?)";
         Film film = databaseClient.queryForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
             return ResponseEntity.ok(film);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"No results found\"}");
         }
+
     }
 
     @PostMapping("/films/add")
@@ -140,7 +143,6 @@ public class APIController {
                     .body("{\"message\":\"Failed to delete film\"}");
         }
     }
-
 }
 
 

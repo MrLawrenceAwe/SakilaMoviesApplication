@@ -128,6 +128,15 @@ hr {
   text-decoration: underline; 
 }
 
+.feedback-success {
+  color: green;
+}
+
+.feedback-error {
+  color: red;
+}
+
+
 
 
 /* Editor Modal */
@@ -184,15 +193,14 @@ hr {
     transition: background-color 0.2s;
 }
 
+.save-button:hover,
+.cancel-button:hover {
+  background-color: #bfbfbf;
+}
+
 .save-button:disabled {
   background-color: #f0f0f0;
   cursor: not-allowed;
-}
-
-.feedback-message {
-  margin-top: 10px;
-  font-weight: bold;
-  color: green;
 }
 
 .modal-button {

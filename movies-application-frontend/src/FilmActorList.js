@@ -6,13 +6,14 @@ import EditableField from './EditableField';
 import { FilmAPIClient } from './APIClients/FilmAPIClient';
 
 
-const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
+const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentFilm, setCurrentFilm] = useState(null);
     const [originalFilm, setOriginalFilm] = useState(null);
     const [isSaved, setIsSaved] = useState(false);
-    const [saveFeedbackMessage, setSaveFeedbackMessage] = useState(null);
+    const [feedbackMessage, setFeedbackMessage] = useState(null);
+    const [feedbackType, setFeedbackType] = useState(null); // "success" or "error"
 
     const handleFilmTitleClick = film => {
         setCurrentFilm({ ...film });
@@ -20,6 +21,12 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
         setIsSaved(false);  // Reset the saved state
         setShowModal(true);
     };
+
+    const handleFieldChange = (fieldName, newValue) => {
+        setCurrentFilm(prevFilm => ({ ...prevFilm, [fieldName]: newValue }));
+        setIsSaved(false);
+    };
+    
 
     const filmHasChanges = () => {
         if (!currentFilm || !originalFilm) return false;
@@ -45,27 +52,43 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
         }
 
         FilmAPIClient.updateFilm(currentFilm.filmId, changes)
-            .then(film => {
+            .then(() => {
                 setIsSaved(true);
-                setSaveFeedbackMessage("Saved!");
+                setFeedbackType('success');
+                setFeedbackMessage("Saved!");
                 setTimeout(() => {
-                    setSaveFeedbackMessage(null);
+                    setFeedbackMessage(null);
                 }, 2000);
                 setIsSaved(true);
-                setOriginalFilm({ currentFilm });
-                onChangesSave(lastSearchQuery);
+                setOriginalFilm({ ...currentFilm });
+                onUpdate(lastSearchQuery);
             })
-            .catch(error => setSaveFeedbackMessage('Error saving film'));
+            .catch(error => {
+                setFeedbackType('error');
+                setFeedbackMessage('Error saving changes')
+            });
     };
     
     const handleCloseModal = () => {
         setShowModal(false);
-        setSaveFeedbackMessage(null);
+        setFeedbackMessage(null);
     }
 
     const handleDeleteFilm = () => {
         FilmAPIClient.deleteFilm(currentFilm.filmId)
-    };
+            .then(() => {
+                setShowDeleteConfirmation(false);
+                setTimeout(() => {
+                    setFeedbackMessage(null);
+                }, 2000);
+                handleCloseModal();
+                onUpdate(lastSearchQuery);
+            })
+            .catch(error => {
+                setFeedbackMessage('Error deleting film')
+                setFeedbackType('error');
+            }); 
+    }
     
 
     return (
@@ -112,17 +135,17 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
                         <EditableField 
                             label="Title" 
                             value={currentFilm.title} 
-                            onChange={newTitle => setCurrentFilm({ ...currentFilm, title: newTitle })}
+                            onChange={newTitle => handleFieldChange('title', newTitle)}
                         />
                         <EditableField 
                             label="Description" 
                             value={currentFilm.description} 
-                            onChange={newDesc => setCurrentFilm({ ...currentFilm, description: newDesc })}
+                            onChange={newDesc => handleFieldChange('description', newDesc)}
                         />
 
                         {filmHasChanges() && !isSaved && <button className="modal-button" onClick={handleSave}>Save</button>}
-                        {saveFeedbackMessage && <div className="feedback-message">{saveFeedbackMessage}</div>}
-                        <button onClick={handleCloseModal}>Close</button>
+                        <button onClick={handleCloseModal} style={{ marginBottom: '20px' }}>Close</button>
+                        {feedbackMessage && <div className={`feedback-message feedback-${feedbackType}`}>{feedbackMessage}</div>}
                     </>
                 )}
             </Modal>
@@ -130,6 +153,7 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
             {/* Delete Confirmation Modal */}
             <Modal show={showDeleteConfirmation} onClose={() => setShowDeleteConfirmation(false)}>
                 <h3>Are you sure you want to delete this film?</h3>
+                {feedbackMessage && <div className={`feedback-message feedback-${feedbackType}`}>{feedbackMessage}</div>}
                 <button className='modal-button' onClick={handleDeleteFilm}>Yes, Delete</button>
                 <button className='modal-button' onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
             </Modal>
@@ -138,5 +162,3 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
 }
 
 export default FilmActorList;
-
-
