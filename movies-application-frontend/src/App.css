@@ -132,6 +132,11 @@ hr {
 
 /* Editor Modal */
 
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.75) !important; 
+  z-index: 1000 !important; 
+}
+
 .editable-field {
   display: flex;
   align-items: center; 
@@ -167,22 +172,16 @@ hr {
 }
 
 .save-button,
-.cancel-button {
-    background-color: #f0f0f0;
+.cancel-button,
+.save-button:hover,
+.cancel-button:hover {
+    background-color: #d4d4d4;
     border: none;
     margin-left: 5px;
     padding: 4px 8px;
     font-size: 12px;
     cursor: pointer;
     transition: background-color 0.2s;
-}
-
-.save-button:hover {
-    background-color: #d4d4d4;
-}
-
-.cancel-button:hover {
-    background-color: #d4d4d4;
 }
 
 .save-button:disabled {
@@ -193,7 +192,7 @@ hr {
 .feedback-message {
   margin-top: 10px;
   font-weight: bold;
-  color: green; /* For success messages; you might want to set a different color for error messages */
+  color: green;
 }
 
 #save-button {

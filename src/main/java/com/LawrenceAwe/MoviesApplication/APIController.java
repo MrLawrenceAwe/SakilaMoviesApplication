@@ -114,6 +114,33 @@ public class APIController {
                     .body("{\"message\":\"Failed to update film\"}");
         }
     }
+
+    @DeleteMapping("/films/delete/{id}")
+    public ResponseEntity<String> deleteFilm(@PathVariable Long id) {
+        String sqlStatement = "DELETE FROM film WHERE film_id=:filmId";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("filmId", id);
+
+        try {
+            int rowsDeleted = databaseClient.updateDatabase(sqlStatement, params);
+            if (rowsDeleted == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"message\":\"Film not found\"}");
+            }
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Film deleted successfully\"}");
+        } catch (DataAccessException e) {
+            System.out.println("Failed to delete film");
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Failed to delete film\"}");
+        }
+    }
+
 }
 
 
