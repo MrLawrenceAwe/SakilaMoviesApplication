@@ -3,19 +3,65 @@ import Modal from './Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import EditableField from './EditableField';
+import { filmAPIClient } from './APIClients/filmAPIClient';
 
-const FilmActorList = ({ films, actors, onFilmUpdate }) => {
+
+const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
     const [showModal, setShowModal] = useState(false);
     const [currentFilm, setCurrentFilm] = useState(null);
+    const [originalFilm, setOriginalFilm] = useState(null);
+    const [isSaved, setIsSaved] = useState(false);
+    const [saveFeedbackMessage, setSaveFeedbackMessage] = useState(null);
 
     const handleFilmTitleClick = film => {
-        setCurrentFilm(film);
+        setCurrentFilm({ ...film });
+        setOriginalFilm(film);
+        setIsSaved(false);  // Reset the saved state
         setShowModal(true);
-    }
+    };
 
+    const filmHasChanges = () => {
+        if (!currentFilm || !originalFilm) return false;
+        return JSON.stringify(currentFilm) !== JSON.stringify(originalFilm);
+    };
+
+    const getChanges = () => {
+        const changes = {};
+        for (const key in currentFilm) {
+            if (currentFilm[key] !== originalFilm[key]) {
+                changes[key] = currentFilm[key];
+            }
+        }
+        return changes;
+    };
+    
+
+    const handleSave = () => {
+        const changes = getChanges();
+
+        if (Object.keys(changes).length === 0) {
+            return;
+        }
+
+        filmAPIClient.updateFilm(currentFilm.filmId, changes)
+            .then(film => {
+                setIsSaved(true);
+                setSaveFeedbackMessage("Saved!");
+                setTimeout(() => {
+                    setSaveFeedbackMessage(null);
+                }, 2000);
+                setIsSaved(true);
+                setOriginalFilm({ currentFilm });
+                onChangesSave(lastSearchQuery);
+            })
+            .catch(error => setSaveFeedbackMessage('Error saving film'));
+    };
+    
     const handleCloseModal = () => {
         setShowModal(false);
+        setSaveFeedbackMessage(null);
     }
+    
 
     return (
         <div>
@@ -34,7 +80,6 @@ const FilmActorList = ({ films, actors, onFilmUpdate }) => {
                         </div>
                     </div>
                 ))}
-
                 </div>
             )}
             
@@ -68,7 +113,9 @@ const FilmActorList = ({ films, actors, onFilmUpdate }) => {
                             value={currentFilm.description} 
                             onChange={newDesc => setCurrentFilm({ ...currentFilm, description: newDesc })}
                         />
-                        {/* Add more fields as needed */}
+
+                        {filmHasChanges() && !isSaved && <button id="save-button" onClick={handleSave}>Save</button>}
+                        {saveFeedbackMessage && <div className="feedback-message">{saveFeedbackMessage}</div>}
                     </>
                 )}
             </Modal>

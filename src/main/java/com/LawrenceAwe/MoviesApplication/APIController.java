@@ -81,6 +81,39 @@ public class APIController {
                     .body("{\"message\":\"Failed to create film\"}");
         }
     }
+
+    @PutMapping("/films/update/{id}")
+    public ResponseEntity<String> updateFilm(@PathVariable Long id, @RequestBody Map<String, Object> changes) {
+
+        if (changes.isEmpty()) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"No fields provided for update.\"}");
+        }
+
+        StringJoiner setStatements = new StringJoiner(", ");
+
+        for (Map.Entry<String, Object> entry : changes.entrySet()) {
+            if (entry.getValue() != null) {
+                setStatements.add(entry.getKey() + "=:" + entry.getKey());
+            }
+        }
+
+        String sqlStatement = String.format("UPDATE film SET %s WHERE film_id=:filmId", setStatements.toString());
+
+        try {
+            Map<String, Object> params = new HashMap<>(changes);
+            params.put("filmId", id);
+            databaseClient.updateDatabase(sqlStatement, params);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Film updated successfully\"}");
+        } catch (DataAccessException e) {
+            System.out.println("Failed to update film");
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Failed to update film\"}");
+        }
+    }
 }
 
 

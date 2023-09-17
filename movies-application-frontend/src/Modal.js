@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
+import './App.css';
 
 const Modal = ({ show, onClose, children }) => {
+  const [error, setError] = useState(null);  
   if (!show) return null;
 
   return (

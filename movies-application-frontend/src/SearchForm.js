@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { filmAPIClient } from './APIClients/filmAPIClient';
 import { Button, TextField, Box } from '@mui/material';
 
 function SearchForm({ onSearch }) {
@@ -13,12 +12,7 @@ function SearchForm({ onSearch }) {
     e.preventDefault();
     if (title === '') return;
 
-    filmAPIClient.getFilmByTitle(title)
-      .then(film => {
-          onSearch(film);
-      })
-      .catch(error => {
-      });
+    onSearch(title);
   }
 
   return (

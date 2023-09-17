@@ -13,6 +13,8 @@ import SearchForm from './SearchForm';
 function App() {
   const [films, setFilms] = useState([]);
   const [error, setError] = useState(null);
+  const [lastSearchQuery, setLastSearchQuery] = useState(null);
+
 
   const handleAddFilmFormSubmit = (newFilm) => {
     filmAPIClient.createFilm(newFilm)
@@ -22,8 +24,18 @@ function App() {
         .catch(error => setError(error.message));
   }
 
-  const handleSearch = (film) => {
-    setFilms([film]);
+  function search(searchQuery) {
+    filmAPIClient.getFilmByTitle(searchQuery)
+        .then(responseFilms => {
+            handleSearch(responseFilms, searchQuery)
+        })
+        .catch(error => setError(error.message));
+  }
+
+  const handleSearch = (responseFilms, searchQuery) => {
+    setLastSearchQuery(searchQuery);
+
+    setFilms([responseFilms]);
     setError(null);
   }
 
@@ -32,8 +44,8 @@ function App() {
       <h1>Sakila Movies</h1>
       <hr/>
       {/* Search*/}
-      <SearchForm onSearch={handleSearch} />
-      <FilmActorList films={films}/>
+      <SearchForm onSearch={search} />
+      <FilmActorList films={films} onChangesSave={search} lastSearchQuery={lastSearchQuery}/>
       <hr />
       {/* Error Message */}
       <CollapsibleSection label="Add Film">
