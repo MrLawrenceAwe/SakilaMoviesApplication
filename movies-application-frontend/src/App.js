@@ -39,6 +39,7 @@ function App() {
       <hr/>
       {/* Search*/}
       <SearchForm onSearch={search} />
+      {error && <p>{error}</p>}
       <FilmActorList films={films} onUpdate={search} lastSearchQuery={lastSearchQuery}/>
       <hr />
       {/* Error Message */}
@@ -50,7 +51,6 @@ function App() {
         <AddActorForm />
       </CollapsibleSection>
       <hr />
-      {error && <p className="error">{error}</p>}
     </div>
   );
 }
