@@ -195,6 +195,6 @@ hr {
   color: green;
 }
 
-#save-button {
+.modal-button {
   margin-right: 10px;
 }

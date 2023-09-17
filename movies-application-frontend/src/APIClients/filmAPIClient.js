@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8080/api';
 
-export const filmAPIClient = {
+export const FilmAPIClient = {
     
     getFilmByTitle: async (title) => {
         try {
@@ -53,6 +53,26 @@ export const filmAPIClient = {
             console.error(error);
             throw error;
         }
+    },
+
+    deleteFilm: async (filmId) => {
+        try {
+            const response = await fetch(`${BASE_URL}/films/delete/${filmId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete film');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
+
+    
     
 }

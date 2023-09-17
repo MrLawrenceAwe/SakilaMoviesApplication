@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import './App.css';
 import FilmActorList from './FilmActorList';
 import AddFilmForm from './AddFilmForm';
-import { filmAPIClient } from './APIClients/filmAPIClient';
+import { FilmAPIClient } from './APIClients/FilmAPIClient';
 import CollapsibleSection from './CollapsibleSection';
 import AddActorForm from './AddActorForm';
 import SearchForm from './SearchForm';
@@ -17,7 +17,7 @@ function App() {
 
 
   const handleAddFilmFormSubmit = (newFilm) => {
-    filmAPIClient.createFilm(newFilm)
+    FilmAPIClient.createFilm(newFilm)
         .then(film => {
             setError(null);
         })
@@ -25,7 +25,7 @@ function App() {
   }
 
   function search(searchQuery) {
-    filmAPIClient.getFilmByTitle(searchQuery)
+    FilmAPIClient.getFilmByTitle(searchQuery)
         .then(responseFilms => {
             handleSearch(responseFilms, searchQuery)
         })
