@@ -41,7 +41,7 @@ const EditableField = ({ label, value: initialValue, onChange }) => {
                         value={tempValue} 
                         onChange={handleInputChange} 
                     />
-                    <button className="save-button" onClick={handleSave} disabled={!hasChanged}>Save</button>
+                    <button className="save-button" onClick={handleSave} disabled={!hasChanged}>Done</button>
                     <button className="cancel-button" onClick={handleCancel}>Cancel</button>
                 </>
             ) : (
