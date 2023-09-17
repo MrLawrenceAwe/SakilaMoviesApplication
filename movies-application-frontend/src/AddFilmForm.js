@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './AddFilmForm.css'
 import { TextField, Button, Typography, Box, Select, MenuItem } from '@mui/material';
+import { FilmAPIClient } from './APIClients/FilmAPIClient';
 
-const FilmForm = ({ onSubmit }) => {
+
+const FilmForm = () => {
     const [filmData, setFilmData] = useState({
         title: null,
         description: null,
@@ -11,6 +13,9 @@ const FilmForm = ({ onSubmit }) => {
         length: null,
         rating: null,
       });
+    
+    const [feedbackMessage, setFeedbackMessage] = useState(null);
+    const [feedbackType, setFeedbackType] = useState(null);
 
     const ratings = ['G', 'PG', 'PG-13', 'R', 'NC-17'];
 
@@ -39,10 +44,24 @@ const FilmForm = ({ onSubmit }) => {
             [name]: value
         }));
     }
-    
-    const handleSubmit = () => {
-        onSubmit(filmData);
-        setFilmData({});
+
+
+    function handleSubmit(){
+        FilmAPIClient.createFilm(filmData)
+            .then(() => {
+                setFeedbackType('success');
+                setFeedbackMessage('Film added!');
+                setTimeout(() => {
+                    setFeedbackMessage(null);
+                }, 5000);
+            })
+            .catch(error => {
+                setFeedbackType('error');
+                setFeedbackMessage(error.message);
+                setTimeout(() => {
+                    setFeedbackMessage(null);
+                }, 5000);
+            });
     }
 
     return (
@@ -122,9 +141,10 @@ const FilmForm = ({ onSubmit }) => {
                 variant="contained" 
                 color="primary" 
                 onClick={handleSubmit} 
-                sx={{ marginTop: 2 }}>
+                sx={{ marginTop: 2, marginBottom: 2}}>
                 Add Film
             </Button>
+            {feedbackMessage && <div className={`feedback-message feedback-${feedbackType}`}>{feedbackMessage}</div>}
         </Box>
     );
 
