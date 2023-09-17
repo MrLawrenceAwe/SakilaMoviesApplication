@@ -3,11 +3,12 @@ import Modal from './Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import EditableField from './EditableField';
-import { filmAPIClient } from './APIClients/filmAPIClient';
+import { FilmAPIClient } from './APIClients/FilmAPIClient';
 
 
 const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentFilm, setCurrentFilm] = useState(null);
     const [originalFilm, setOriginalFilm] = useState(null);
     const [isSaved, setIsSaved] = useState(false);
@@ -43,7 +44,7 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
             return;
         }
 
-        filmAPIClient.updateFilm(currentFilm.filmId, changes)
+        FilmAPIClient.updateFilm(currentFilm.filmId, changes)
             .then(film => {
                 setIsSaved(true);
                 setSaveFeedbackMessage("Saved!");
@@ -61,6 +62,10 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
         setShowModal(false);
         setSaveFeedbackMessage(null);
     }
+
+    const handleDeleteFilm = () => {
+        FilmAPIClient.deleteFilm(currentFilm.filmId)
+    };
     
 
     return (
@@ -74,7 +79,7 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
                             <h3 onClick={() => handleFilmTitleClick(film)}>{film.title}</h3>
                             <p>{film.description}</p>
                             <div className="film-actions">
-                            <button className="delete-film-btn">
+                            <button className="delete-film-btn" onClick={() => { setCurrentFilm(film); setShowDeleteConfirmation(true); }}>
                                 <FontAwesomeIcon icon={faTrash} /> Delete
                             </button>
                         </div>
@@ -99,6 +104,7 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
                 </div>
             )}
 
+            {/* Edit Film Modal */}
             <Modal show={showModal} onClose={handleCloseModal}>
                 {currentFilm && (
                     <>
@@ -114,10 +120,18 @@ const FilmActorList = ({ films, actors, onChangesSave, lastSearchQuery }) => {
                             onChange={newDesc => setCurrentFilm({ ...currentFilm, description: newDesc })}
                         />
 
-                        {filmHasChanges() && !isSaved && <button id="save-button" onClick={handleSave}>Save</button>}
+                        {filmHasChanges() && !isSaved && <button className="modal-button" onClick={handleSave}>Save</button>}
                         {saveFeedbackMessage && <div className="feedback-message">{saveFeedbackMessage}</div>}
+                        <button onClick={handleCloseModal}>Close</button>
                     </>
                 )}
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal show={showDeleteConfirmation} onClose={() => setShowDeleteConfirmation(false)}>
+                <h3>Are you sure you want to delete this film?</h3>
+                <button className='modal-button' onClick={handleDeleteFilm}>Yes, Delete</button>
+                <button className='modal-button' onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
             </Modal>
         </div>
     );
