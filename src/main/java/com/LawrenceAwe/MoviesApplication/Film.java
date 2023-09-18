@@ -29,7 +29,7 @@ public class Film {
 
     private BigDecimal replacementCost;
 
-    private String rating; // Using String to represent the enum values
+    private String rating;
 
     private Set<String> specialFeatures;
 
@@ -38,13 +38,14 @@ public class Film {
     // Default constructor for deserialization
     public Film() {}
 
-    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId) {
+    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId, String rating) {
         this.filmId = String.valueOf(filmId);
         this.title = title;
         this.description = description;
         this.releaseYear = releaseYear;
         this.languageId = languageId;
         this.originalLanguageId = originalLanguageId;
+        this.rating = rating;
     }
 
     public Film(int filmId, String title, String description,

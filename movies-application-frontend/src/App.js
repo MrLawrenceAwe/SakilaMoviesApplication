@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import FilmActorList from "./FilmActorList";
+import FilmList from "./FilmList";
 import AddFilmForm from "./AddFilmForm";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 import CollapsibleSection from "./CollapsibleSection";
@@ -81,9 +81,9 @@ function App() {
       <hr />
       <SearchForm onSearch={search} />
       {error && <p>{error}</p>}
-      <FilmActorList
+      <FilmList
         films={films}
-        onFilmChangesSavedToDatabase={search}
+        onChangesSavedToDatabase={search}
         lastSearchQuery={lastSearchQuery}
       />
 

@@ -23,7 +23,7 @@ public class DatabaseClient {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public <T> T queryForObject(String sql, Object[] params, RowMapper<T> rowMapper) {
+    public <T> T queryDatabaseForObject(String sql, Object[] params, RowMapper<T> rowMapper) {
         try {
             return jdbcTemplate.queryForObject(sql, params, rowMapper);
         } catch (EmptyResultDataAccessException e) {
@@ -31,7 +31,7 @@ public class DatabaseClient {
         }
     }
 
-    public <T> List<T> queryForList(String sql, Object[] params, RowMapper<T> rowMapper) {
+    public <T> List<T> queryDatabaseForList(String sql, Object[] params, RowMapper<T> rowMapper) {
         return jdbcTemplate.query(sql, params, rowMapper);
     }
 
