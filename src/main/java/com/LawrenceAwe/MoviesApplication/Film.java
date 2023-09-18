@@ -1,4 +1,4 @@
-package com.LawrenceAwe.MoviesApplication.DataTransferObjects;
+package com.LawrenceAwe.MoviesApplication;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -15,7 +15,7 @@ public class Film {
 
     private String description;
 
-    private String releaseYear;
+    private Integer releaseYear;
 
     private String languageId;
 
@@ -38,14 +38,17 @@ public class Film {
     // Default constructor for deserialization
     public Film() {}
 
-    public Film(int filmId, String title, String description) {
+    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId) {
         this.filmId = String.valueOf(filmId);
         this.title = title;
         this.description = description;
+        this.releaseYear = releaseYear;
+        this.languageId = languageId;
+        this.originalLanguageId = originalLanguageId;
     }
 
     public Film(int filmId, String title, String description,
-                String releaseYear, String languageId, String originalLanguageId,
+                Integer releaseYear, String languageId, String originalLanguageId,
                 Short rentalDuration, BigDecimal rentalRate, Short length,
                 BigDecimal replacementCost, String rating, Set<String> specialFeatures,
                 Timestamp lastUpdate) {
@@ -89,11 +92,11 @@ public class Film {
         this.description = description == null ? null : description.trim();
     }
 
-    public String getReleaseYear() {
+    public Integer getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(String releaseYear) {
+    public void setReleaseYear(Integer releaseYear) {
         this.releaseYear = releaseYear;
     }
 

@@ -1,7 +1,5 @@
 package com.LawrenceAwe.MoviesApplication;
 
-import com.LawrenceAwe.MoviesApplication.DataTransferObjects.Film;
-import com.LawrenceAwe.MoviesApplication.Services.FilmService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,7 +26,8 @@ public class APIController {
 
     @GetMapping("/films/{title}")
     public ResponseEntity<?> getFilmByTitle(@PathVariable String title) {
-        String sql = "SELECT film_id, title, description FROM film WHERE LOWER(title) = LOWER(?)";
+        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id " +
+                "FROM film WHERE LOWER(title) = LOWER(?)";
         Film film = databaseClient.queryForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
@@ -43,13 +42,16 @@ public class APIController {
 
     @GetMapping("/films/category/{categoryName}")
     public ResponseEntity<?> getFilmsByCategory(@PathVariable String categoryName) {
-        String sqlStatement = "SELECT f.film_id, f.title, f.description " +
+        String sqlStatement = "SELECT f.film_id, title, description, release_year, language_id, original_language_id " +
                 "FROM film f " +
                 "JOIN film_category fc ON f.film_id = fc.film_id " +
                 "JOIN category c ON fc.category_id = c.category_id " +
                 "WHERE LOWER(c.name) = LOWER(?)";
 
+
         List<Film> films = databaseClient.queryForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
+
+        //System.out.println(films.get(0).getReleaseYear());
 
         if (!films.isEmpty()) {
             return ResponseEntity.ok(films);
