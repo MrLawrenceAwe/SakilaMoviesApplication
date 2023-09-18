@@ -23,7 +23,7 @@ function SearchForm({ onSearch }) {
           fullWidth 
           value={title} 
           onChange={handleSearchValueChange} 
-          label="Titles, actors"
+          label="Titles, categories"
         />
         <Button 
           variant="contained" 

@@ -10,7 +10,7 @@ export const FilmAPIClient = {
             const responseBody = await response.json();
             
             if (!response.ok) {
-                const errorMessage = responseBody.message || 'Failed to fetch film by title';
+                const errorMessage = responseBody.message || 'Failed to fetch films';
                 throw new Error(errorMessage);
             }
             
@@ -75,8 +75,25 @@ export const FilmAPIClient = {
             console.error(error);
             throw error;
         }
+    },
+
+    getFilmsByCategory: async (categoryName) => {
+        try {
+            categoryName = encodeURIComponent(categoryName);
+            const response = await fetch(`${BASE_URL}/films/category/${categoryName}`);
+            
+            const responseBody = await response.json();
+            
+            if (!response.ok) {
+                const errorMessage = responseBody.message || 'Failed to fetch films by category';
+                throw new Error(errorMessage);
+            }
+            
+            return responseBody;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    
-    
 }

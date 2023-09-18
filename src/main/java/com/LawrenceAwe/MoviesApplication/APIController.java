@@ -41,16 +41,15 @@ public class APIController {
 
     }
 
-    @GetMapping("/films/{categoryName}")
+    @GetMapping("/films/category/{categoryName}")
     public ResponseEntity<?> getFilmsByCategory(@PathVariable String categoryName) {
-        // SQL query to fetch films by category
-        String sql = "SELECT f.film_id, f.title, f.description " +
+        String sqlStatement = "SELECT f.film_id, f.title, f.description " +
                 "FROM film f " +
                 "JOIN film_category fc ON f.film_id = fc.film_id " +
                 "JOIN category c ON fc.category_id = c.category_id " +
                 "WHERE LOWER(c.name) = LOWER(?)";
 
-        List<Film> films = databaseClient.queryForList(sql, new Object[]{categoryName}, FilmService::mapRowToFilm);
+        List<Film> films = databaseClient.queryForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
 
         if (!films.isEmpty()) {
             return ResponseEntity.ok(films);
