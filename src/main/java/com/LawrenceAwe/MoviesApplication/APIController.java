@@ -26,9 +26,9 @@ public class APIController {
 
     @GetMapping("/films/{title}")
     public ResponseEntity<?> getFilmByTitle(@PathVariable String title) {
-        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id " +
+        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id, rating " +
                 "FROM film WHERE LOWER(title) = LOWER(?)";
-        Film film = databaseClient.queryForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
+        Film film = databaseClient.queryDatabaseForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
             return ResponseEntity.ok(film);
@@ -42,16 +42,14 @@ public class APIController {
 
     @GetMapping("/films/category/{categoryName}")
     public ResponseEntity<?> getFilmsByCategory(@PathVariable String categoryName) {
-        String sqlStatement = "SELECT f.film_id, title, description, release_year, language_id, original_language_id " +
+        String sqlStatement = "SELECT f.film_id, title, description, release_year, language_id, original_language_id, rating " +
                 "FROM film f " +
                 "JOIN film_category fc ON f.film_id = fc.film_id " +
                 "JOIN category c ON fc.category_id = c.category_id " +
                 "WHERE LOWER(c.name) = LOWER(?)";
 
 
-        List<Film> films = databaseClient.queryForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
-
-        //System.out.println(films.get(0).getReleaseYear());
+        List<Film> films = databaseClient.queryDatabaseForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
 
         if (!films.isEmpty()) {
             return ResponseEntity.ok(films);
@@ -108,7 +106,7 @@ public class APIController {
     }
 
     @PutMapping("/films/update/{id}")
-    public ResponseEntity<String> updateFilm(@PathVariable Long id, @RequestBody Map<String, Object> changes) {
+    public ResponseEntity<String> updateFilmInDatabaseByID(@PathVariable Long id, @RequestBody Map<String, Object> changes) {
 
         if (changes.isEmpty()) {
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
@@ -141,14 +139,22 @@ public class APIController {
     }
 
     @DeleteMapping("/films/delete/{id}")
-    public ResponseEntity<String> deleteFilm(@PathVariable Long id) {
-        String sqlStatement = "DELETE FROM film WHERE film_id=:filmId";
+    public ResponseEntity<String> deleteFilmInDatabaseByID(@PathVariable Long id) {
+        String deleteRentalsSQLStatement = "DELETE FROM rental WHERE inventory_id IN (SELECT inventory_id FROM inventory WHERE film_id=:filmId)";
+        String deleteInventorySQLStatement = "DELETE FROM inventory WHERE film_id=:filmId";
+        String deleteFilmCategoryRelationSQLStatement = "DELETE FROM film_category WHERE film_id=:filmId";
+        String deleteFilmActorRelationSQLStatement = "DELETE FROM film_actor WHERE film_id=:filmId";
+        String deleteFilmSQLStatement = "DELETE FROM film WHERE film_id=:filmId";
 
         Map<String, Object> params = new HashMap<>();
         params.put("filmId", id);
 
         try {
-            int rowsDeleted = databaseClient.updateDatabase(sqlStatement, params);
+            databaseClient.updateDatabase(deleteRentalsSQLStatement, params);
+            databaseClient.updateDatabase(deleteInventorySQLStatement, params);
+            databaseClient.updateDatabase(deleteFilmCategoryRelationSQLStatement, params);
+            databaseClient.updateDatabase(deleteFilmActorRelationSQLStatement, params);
+            int rowsDeleted = databaseClient.updateDatabase(deleteFilmSQLStatement, params);
             if (rowsDeleted == 0) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.APPLICATION_JSON)
