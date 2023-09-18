@@ -158,14 +158,9 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
                             onChange={newReleaseYear => handleFieldChange('releaseYear', newReleaseYear)}
                         />
                         <EditableField
-                            label="Language ID"
-                            initialValue={currentFilm.languageId}
-                            onChange={newLanguageId => handleFieldChange('languageId', newLanguageId)}
-                        />
-                        <EditableField
-                            label="Original Language ID"
-                            initialValue={currentFilm.originalLanguageId}
-                            onChange={newOriginalLanguageId => handleFieldChange('originalLanguageId', newOriginalLanguageId)}
+                            label="Language"
+                            initialValue={currentFilm.language}
+                            onChange={newLanguage => handleFieldChange('language', newLanguage)}
                         />
                         <EditableField
                             label="Rating"

@@ -31,6 +31,8 @@ public class APIController {
         Film film = databaseClient.queryDatabaseForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
+            String languageSQL = "SELECT name FROM language WHERE language_id = ?";
+            film.setLanguage(databaseClient.queryDatabaseForObject(languageSQL, new Object[]{film.getLanguageId()}, (resultSet, rowNum) -> resultSet.getString("name")));
             return ResponseEntity.ok(film);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
