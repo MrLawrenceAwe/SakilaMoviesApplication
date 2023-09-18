@@ -15,6 +15,8 @@ function App() {
 
   const addFilmRef = React.useRef(null);
 
+  
+
   function search(searchQuery) {
     FilmAPIClient.getFilmByTitle(searchQuery)
       .then((responseFilms) => {
@@ -72,6 +74,7 @@ function App() {
     };
   }, []);
 
+
   return (
     <div className="App">
       <h1>Sakila Movies</h1>
@@ -80,7 +83,7 @@ function App() {
       {error && <p>{error}</p>}
       <FilmActorList
         films={films}
-        onUpdate={search}
+        onFilmChangesSavedToDatabase={search}
         lastSearchQuery={lastSearchQuery}
       />
 
