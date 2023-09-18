@@ -7,6 +7,8 @@ import {
   Box,
   Select,
   MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 
@@ -40,7 +42,7 @@ const FilmForm = () => {
         if (isNaN(value) || value < 0) return;
         break;
       case "rating":
-        if (!ratings.includes(value)) return;
+        if (value !== "" && !ratings.includes(value)) return;
         break;
       default:
         break;
@@ -52,10 +54,10 @@ const FilmForm = () => {
     }));
 
     if (errorFields[name]) {
-        setErrorFields(prevErrors => ({
-            ...prevErrors,
-            [name]: null
-        }));
+      setErrorFields((prevErrors) => ({
+        ...prevErrors,
+        [name]: null,
+      }));
     }
   };
 
@@ -157,19 +159,28 @@ const FilmForm = () => {
         value={filmData.length || ""}
         sx={{ marginTop: 2 }}
       />
-      <Select
-        fullWidth
-        name="rating"
-        value={filmData.rating || ""}
-        onChange={handleChange}
-        sx={{ marginTop: 2 }}
-      >
-        {ratings.map((rating) => (
-          <MenuItem key={rating} value={rating}>
-            {rating}
-          </MenuItem>
-        ))}
-      </Select>
+      <FormControl variant="outlined" fullWidth sx={{ marginTop: 2 }}>
+        <InputLabel htmlFor="rating">Rating</InputLabel>
+        <Select
+          label="Rating"
+          name="rating"
+          value={filmData.rating || ""}
+          onChange={handleChange}
+          inputProps={{
+            name: "rating",
+            id: "rating",
+          }}
+        >
+          <MenuItem value="">No Rating</MenuItem>
+
+          {ratings.map((rating) => (
+            <MenuItem key={rating} value={rating}>
+              {rating}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <Button
         variant="contained"
         color="primary"
