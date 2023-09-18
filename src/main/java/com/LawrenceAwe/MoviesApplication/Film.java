@@ -35,6 +35,8 @@ public class Film {
 
     private Timestamp lastUpdate;
 
+    private String language;
+
     // Default constructor for deserialization
     public Film() {}
 
@@ -171,5 +173,13 @@ public class Film {
 
     public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public String getLanguage() {
+    	return language;
+    }
+
+    public void setLanguage(String language) {
+    	this.language = language;
     }
 }

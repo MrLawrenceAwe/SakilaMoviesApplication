@@ -145,15 +145,6 @@ const FilmForm = () => {
       />
       <TextField
         fullWidth
-        variant="outlined"
-        name="originalLanguageId"
-        label="Original Language ID"
-        onChange={handleChange}
-        value={filmData.originalLanguageId || ""}
-        sx={{ marginTop: 2 }}
-      />
-      <TextField
-        fullWidth
         type="number"
         variant="outlined"
         name="length"
