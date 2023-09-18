@@ -142,6 +142,21 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                             value={currentFilm.description} 
                             onChange={newDesc => handleFieldChange('description', newDesc)}
                         />
+                        <EditableField
+                            label="Release Year"
+                            value={currentFilm.releaseYear}
+                            onChange={newReleaseYear => handleFieldChange('releaseYear', newReleaseYear)}
+                        />
+                        <EditableField
+                            label="Language ID"
+                            value={currentFilm.languageId}
+                            onChange={newLanguageId => handleFieldChange('languageId', newLanguageId)}
+                        />
+                        <EditableField
+                            label="Original Language ID"
+                            value={currentFilm.originalLanguageId}
+                            onChange={newOriginalLanguageId => handleFieldChange('originalLanguageId', newOriginalLanguageId)}
+                        />
 
                         {filmHasChanges() && !isSaved && <button className="modal-button" onClick={handleSave}>Save</button>}
                         <button onClick={handleCloseModal} style={{ marginBottom: '20px' }}>Close</button>
