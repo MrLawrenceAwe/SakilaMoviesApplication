@@ -97,9 +97,9 @@ function App() {
         <AddFilmForm />
         <hr />
       </CollapsibleSection>
-      <CollapsibleSection label="Add Actor">
+      {/* <CollapsibleSection label="Add Actor">
         <AddActorForm />
-      </CollapsibleSection>
+      </CollapsibleSection> */}
       <hr />
     </div>
   );

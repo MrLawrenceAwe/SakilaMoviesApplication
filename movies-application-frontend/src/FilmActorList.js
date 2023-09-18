@@ -114,7 +114,7 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
             {/* Divider if both films and actors are present */}
             {films && films.length > 0 && actors && actors.length > 0 && <hr />}
 
-            {/* List of Actors */}
+            {/* List of Actors
             {actors && actors.length > 0 && (
                 <div>
                     <h2>Actors</h2>
@@ -125,7 +125,7 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                     </div>
                     ))}
                 </div>
-            )}
+            )} */}
 
             {/* Edit Film Modal */}
             <Modal show={showModal} onClose={handleCloseModal}>
