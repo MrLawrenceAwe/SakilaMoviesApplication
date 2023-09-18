@@ -27,6 +27,7 @@ const FilmForm = () => {
   const [errorFields, setErrorFields] = useState({});
 
   const ratings = ["G", "PG", "PG-13", "R", "NC-17"];
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +38,9 @@ const FilmForm = () => {
         break;
       case "description":
         if (value.length > 1000) return;
+        break;
+      case "releaseYear":
+        if (isNaN(value) || value < 0) return;
         break;
       case "length":
         if (isNaN(value) || value < 0) return;
@@ -154,7 +158,7 @@ const FilmForm = () => {
         type="number"
         variant="outlined"
         name="length"
-        label="Length"
+        label="Length (minutes)"
         onChange={handleChange}
         value={filmData.length || ""}
         sx={{ marginTop: 2 }}

@@ -2,16 +2,34 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const EditableField = ({ label, value: initialValue, onChange }) => {
+const EditableField = ({ label, initialValue, onChange }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(initialValue);
     const [hasChanged, setHasChanged] = useState(false);
 
     const handleInputChange = (e) => {
         const newValue = e.target.value;
+        switch (label) {
+            case "Title":
+              if (newValue.length > 255) return;
+              break;
+            case "Description":
+              if (newValue.length > 65_535) return;
+              break;
+            case "Release Year":
+              console.log(newValue);
+              if (isNaN(newValue) || newValue < 0) return;
+              break;
+            case "Language ID":
+            case "Original Language ID":
+              if (isNaN(newValue) || newValue < 0) return;
+              break;
+            default:
+              break;
+          }
+
         setTempValue(newValue);
 
-        // Check if the new value (after trimming) is different from the initial value
         if (newValue.trim() !== initialValue) {
             setHasChanged(true);
         } else {
@@ -26,9 +44,9 @@ const EditableField = ({ label, value: initialValue, onChange }) => {
     };
 
     const handleCancel = () => {
-        setTempValue(initialValue); // Reset the temporary value
-        setIsEditing(false); // Exit the edit mode
-        setHasChanged(false); // Reset the changed status
+        setTempValue(initialValue); 
+        setIsEditing(false); 
+        setHasChanged(false);
     };
 
     return (

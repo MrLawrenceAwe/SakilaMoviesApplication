@@ -6,7 +6,7 @@ import EditableField from './EditableField';
 import { FilmAPIClient } from './APIClients/FilmAPIClient';
 
 
-const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
+const FilmActorList = ({ films, actors, onFilmChangesSavedToDatabase, lastSearchQuery }) => {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [currentFilm, setCurrentFilm] = useState(null);
@@ -61,7 +61,7 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                 }, 2000);
                 setIsSaved(true);
                 setOriginalFilm({ ...currentFilm });
-                onUpdate(lastSearchQuery);
+                onFilmChangesSavedToDatabase(lastSearchQuery);
             })
             .catch(error => {
                 setFeedbackType('error');
@@ -82,15 +82,15 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                     setFeedbackMessage(null);
                 }, 2000);
                 handleCloseModal();
-                onUpdate(lastSearchQuery);
+                onFilmChangesSavedToDatabase(lastSearchQuery);
             })
             .catch(error => {
                 setFeedbackMessage('Error deleting film')
                 setFeedbackType('error');
             }); 
     }
-    
 
+    
     return (
         <div>
             {/* List of Films */}
@@ -134,17 +134,17 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                         <h3>{currentFilm.title}</h3>
                         <EditableField 
                             label="Title" 
-                            value={currentFilm.title} 
+                            initialValue={currentFilm.title} 
                             onChange={newTitle => handleFieldChange('title', newTitle)}
                         />
                         <EditableField 
                             label="Description" 
-                            value={currentFilm.description} 
+                            initialValue={currentFilm.description} 
                             onChange={newDesc => handleFieldChange('description', newDesc)}
                         />
                         <EditableField
                             label="Release Year"
-                            value={currentFilm.releaseYear}
+                            initialValue={currentFilm.releaseYear}
                             onChange={newReleaseYear => handleFieldChange('releaseYear', newReleaseYear)}
                         />
                         <EditableField
@@ -154,7 +154,7 @@ const FilmActorList = ({ films, actors, onUpdate, lastSearchQuery }) => {
                         />
                         <EditableField
                             label="Original Language ID"
-                            value={currentFilm.originalLanguageId}
+                            initialValue={currentFilm.originalLanguageId}
                             onChange={newOriginalLanguageId => handleFieldChange('originalLanguageId', newOriginalLanguageId)}
                         />
 
