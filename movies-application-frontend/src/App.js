@@ -4,7 +4,6 @@ import FilmList from "./FilmList";
 import AddFilmForm from "./AddFilmForm";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 import CollapsibleSection from "./CollapsibleSection";
-import AddActorForm from "./AddActorForm";
 import SearchForm from "./SearchForm";
 
 function App() {
