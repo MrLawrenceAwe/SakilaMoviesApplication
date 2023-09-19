@@ -25,7 +25,7 @@ public class Film {
 
     private BigDecimal rentalRate;
 
-    private Short length;
+    private String length;
 
     private BigDecimal replacementCost;
 
@@ -42,19 +42,20 @@ public class Film {
     // Default constructor for deserialization
     public Film() {}
 
-    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId, String rating) {
+    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId, String length, String rating) {
         this.filmId = String.valueOf(filmId);
         this.title = title;
         this.description = description;
         this.releaseYear = releaseYear;
         this.languageId = languageId;
         this.originalLanguageId = originalLanguageId;
+        this.length = length;
         this.rating = rating;
     }
 
     public Film(int filmId, String title, String description,
                 Integer releaseYear, String languageId, String originalLanguageId,
-                Short rentalDuration, BigDecimal rentalRate, Short length,
+                Short rentalDuration, BigDecimal rentalRate, String length,
                 BigDecimal replacementCost, String rating, Set<String> specialFeatures,
                 Timestamp lastUpdate) {
 
@@ -137,11 +138,11 @@ public class Film {
         this.rentalRate = rentalRate;
     }
 
-    public Short getLength() {
+    public String getLength() {
         return length;
     }
 
-    public void setLength(Short length) {
+    public void setLength(String length) {
         this.length = length;
     }
 

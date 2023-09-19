@@ -26,7 +26,7 @@ public class APIController {
 
     @GetMapping("/films/{title}")
     public ResponseEntity<?> getFilmByTitle(@PathVariable String title) {
-        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id, rating " +
+        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id, length, rating " +
                 "FROM film WHERE LOWER(title) = LOWER(?)";
         Film film = databaseClient.queryDatabaseForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
@@ -43,7 +43,7 @@ public class APIController {
 
     @GetMapping("/films/category/{categoryName}")
     public ResponseEntity<?> getFilmsByCategory(@PathVariable String categoryName) {
-        String sqlStatement = "SELECT f.film_id, title, description, release_year, language_id, original_language_id, rating " +
+        String sqlStatement = "SELECT f.film_id, title, description, release_year, language_id, original_language_id, length, rating " +
                 "FROM film f " +
                 "JOIN film_category fc ON f.film_id = fc.film_id " +
                 "JOIN category c ON fc.category_id = c.category_id " +
