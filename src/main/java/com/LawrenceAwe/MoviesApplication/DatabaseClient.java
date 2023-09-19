@@ -31,6 +31,15 @@ public class DatabaseClient {
         }
     }
 
+    public <T> T queryDatabaseForObject(String sql, Object param, RowMapper<T> rowMapper) {
+        try {
+            Object[] params = {param};
+            return jdbcTemplate.queryForObject(sql, params, rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
     public <T> List<T> queryDatabaseForList(String sql, Object[] params, RowMapper<T> rowMapper) {
         return jdbcTemplate.query(sql, params, rowMapper);
     }

@@ -83,8 +83,7 @@ public class APIController {
         fieldMap.put("length", film.getLength());
         fieldMap.put("replacement_cost", film.getReplacementCost());
         fieldMap.put("rating", film.getRating());
-        if (film.getSpecialFeatures() != null)
-            fieldMap.put("special_features", String.join(",", film.getSpecialFeatures()));
+
 
         Map<String, Object> params = new HashMap<>();
         for (Map.Entry<String, Object> entry : fieldMap.entrySet()) {
@@ -100,6 +99,17 @@ public class APIController {
         try {
             databaseClient.updateDatabase(sqlStatement, params);
             System.out.println("Film created successfully");
+            if (film.getCategory() != null){
+                String getFilmIDSQLStatement = "SELECT film_id FROM film WHERE title = ?";
+                String getCategoryIDSQLStatement = "SELECT category_id FROM category WHERE name = ?";
+                String filmId = databaseClient.queryDatabaseForObject(getFilmIDSQLStatement, film.getTitle().toUpperCase(), (resultSet, rowNum) -> resultSet.getString("film_id"));
+                String categoryId = databaseClient.queryDatabaseForObject(getCategoryIDSQLStatement, film.getCategory(), (resultSet, rowNum) -> resultSet.getString("category_id"));
+                params.clear();
+                params.put("filmId", filmId);
+                params.put("categoryId", categoryId);
+                String addFilmCategoryRelationSQLStatement = "INSERT INTO film_category (film_id, category_id) VALUES (:filmId, :categoryId)";
+                databaseClient.updateDatabase(addFilmCategoryRelationSQLStatement, params);
+            }
             return ResponseEntity.status(HttpStatus.CREATED)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\":\"Film created successfully\"}");

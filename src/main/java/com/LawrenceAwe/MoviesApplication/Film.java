@@ -37,6 +37,8 @@ public class Film {
 
     private String language;
 
+    private String category;
+
     // Default constructor for deserialization
     public Film() {}
 
@@ -181,5 +183,13 @@ public class Film {
 
     public void setLanguage(String language) {
     	this.language = language;
+    }
+
+    public String getCategory() {
+    	return category;
+    }
+
+    public void setCategory(String category) {
+    	this.category = category;
     }
 }
