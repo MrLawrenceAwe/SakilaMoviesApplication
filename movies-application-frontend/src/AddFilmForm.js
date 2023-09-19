@@ -19,6 +19,7 @@ const FilmForm = () => {
     languageId: null,
     length: null,
     rating: null,
+    category: null,
   });
 
   const [feedbackMessage, setFeedbackMessage] = useState(null);
@@ -80,7 +81,6 @@ const FilmForm = () => {
       return;
     }
 
-    // The rest of your handleSubmit function remains unchanged.
     FilmAPIClient.createFilm(filmData)
       .then(() => {
         setFeedbackType("success");
@@ -174,6 +174,17 @@ const FilmForm = () => {
           ))}
         </Select>
       </FormControl>
+      <TextField
+        fullWidth
+        variant="outlined"
+        name="category"
+        label="Category"
+        onChange={handleChange}
+        value={filmData.category || ""}
+        sx={{ marginTop: 2 }}
+        error={!!errorFields.category} // check if the title has an error
+        helperText={errorFields.category} // display the error message
+      />
 
       <Button
         variant="contained"
