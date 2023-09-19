@@ -19,6 +19,7 @@ public class FilmService {
                 releaseYear,
                 resultSet.getString("language_id"),
                 resultSet.getString("original_language_id"),
+                resultSet.getString("length"),
                 resultSet.getString("rating")
         );
     }
