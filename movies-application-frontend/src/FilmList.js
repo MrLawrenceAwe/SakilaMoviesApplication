@@ -163,7 +163,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
                             onChange={newLanguage => handleFieldChange('language', newLanguage)}
                         />
                         <EditableField
-                            label="Length"
+                            label="Length (minutes)"
                             initialValue={currentFilm.length}
                             onChange={newLength => handleFieldChange('length', newLength)}
                         />
