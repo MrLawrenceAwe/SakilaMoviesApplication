@@ -26,12 +26,13 @@ public class APIController {
 
     @GetMapping("/films/{title}")
     public ResponseEntity<?> getFilmByTitle(@PathVariable String title) {
-        String sql = "SELECT film_id, title, description, release_year, language_id, original_language_id, length, rating " +
+        String sql = "SELECT film_id, title, description, release_year, language_id, length, rating " +
                 "FROM film WHERE LOWER(title) = LOWER(?)";
         Film film = databaseClient.queryDatabaseForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
-            setFilmLanguage(film);
+            film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
+            film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
             return ResponseEntity.ok(film);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -39,6 +40,11 @@ public class APIController {
                     .body("{\"message\":\"No results found\"}");
         }
 
+    }
+
+    private String getFilmCategory(int filmId) {
+        String sqlStatement = "SELECT name FROM category WHERE category_id IN (SELECT category_id FROM film_category WHERE film_id = ?)";
+        return databaseClient.queryDatabaseForObject(sqlStatement, new Object[]{filmId}, (resultSet, rowNum) -> resultSet.getString("name"));
     }
 
     @GetMapping("/films/category/{categoryName}")
@@ -51,7 +57,10 @@ public class APIController {
 
 
         List<Film> films = databaseClient.queryDatabaseForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
-        for (Film film : films) setFilmLanguage(film);
+        for (Film film : films) {
+            film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
+            film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
+        }
 
         if (!films.isEmpty()) {
             return ResponseEntity.ok(films);
@@ -62,9 +71,9 @@ public class APIController {
         }
     }
 
-    private void setFilmLanguage(Film film) {
+    private String getFilmLanguage(int languageId) {
         String languageSQL = "SELECT name FROM language WHERE language_id = ?";
-        film.setLanguage(databaseClient.queryDatabaseForObject(languageSQL, new Object[]{film.getLanguageId()}, (resultSet, rowNum) -> resultSet.getString("name")));
+        return databaseClient.queryDatabaseForObject(languageSQL, new Object[]{languageId}, (resultSet, rowNum) -> resultSet.getString("name"));
     }
 
     @GetMapping("/films/categories")
@@ -103,20 +112,13 @@ public class APIController {
         fieldMap.put("title", film.getTitle().toUpperCase());
         fieldMap.put("description", film.getDescription());
         fieldMap.put("release_year", film.getReleaseYear());
-        fieldMap.put("language", film.getLanguage());
-        fieldMap.put("original_language_id", film.getOriginalLanguageId());
-        fieldMap.put("rental_duration", film.getRentalDuration());
-        fieldMap.put("rental_rate", film.getRentalRate());
-        fieldMap.put("length", film.getLength());
-        fieldMap.put("replacement_cost", film.getReplacementCost());
-        fieldMap.put("rating", film.getRating());
-
-        if (fieldMap.get("language") != null) {
+        if (film.getLanguage() != null) {
             String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
-            String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, fieldMap.get("language"), (resultSet, rowNum) -> resultSet.getString("language_id"));
+            String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, film.getLanguage(), (resultSet, rowNum) -> resultSet.getString("language_id"));
             fieldMap.put("language_id", languageId);
-            fieldMap.remove("language");
         }
+        fieldMap.put("length", film.getLength());
+        fieldMap.put("rating", film.getRating());
 
 
         Map<String, Object> params = new HashMap<>();
@@ -156,8 +158,8 @@ public class APIController {
         }
     }
 
-    @PutMapping("/films/update/{id}")
-    public ResponseEntity<String> updateFilmInDatabaseByID(@PathVariable Long id, @RequestBody Map<String, Object> changes) {
+    @PutMapping("/films/update/{filmId}")
+    public ResponseEntity<String> updateFilmInDatabaseByID(@PathVariable Long filmId, @RequestBody Map<String, Object> changes) {
 
         if (changes.isEmpty()) {
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
@@ -171,6 +173,25 @@ public class APIController {
             changes.remove("language");
         }
 
+        if (changes.containsKey("category")) {
+            String getCategoryIDSQLStatement = "SELECT category_id FROM category WHERE name = ?";
+            String categoryId = databaseClient.queryDatabaseForObject(getCategoryIDSQLStatement, changes.get("category"), (resultSet, rowNum) -> resultSet.getString("category_id"));
+            changes.remove("category");
+            String deleteFilmCategoryRelationSQLStatement = "DELETE FROM film_category WHERE film_id=:filmId";
+            changes.put("filmId", filmId);
+            databaseClient.updateDatabase(deleteFilmCategoryRelationSQLStatement, changes);
+            changes.put("categoryId", categoryId);
+            String addFilmCategoryRelationSQLStatement = "INSERT INTO film_category (film_id, category_id) VALUES (:filmId, :categoryId)";
+            databaseClient.updateDatabase(addFilmCategoryRelationSQLStatement, changes);
+            changes.remove("filmId");
+            changes.remove("categoryId");
+
+            if (changes.isEmpty()) {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"message\":\"Film updated successfully\"}");
+            }
+        }
+
         StringJoiner setStatements = new StringJoiner(", ");
 
         for (Map.Entry<String, Object> entry : changes.entrySet()) {
@@ -179,12 +200,12 @@ public class APIController {
             }
         }
 
-        String sqlStatement = String.format("UPDATE film SET %s WHERE film_id=:filmId", setStatements.toString());
+        String updateFilmSQLStatement = String.format("UPDATE film SET %s WHERE film_id=:filmId", setStatements.toString());
 
         try {
             Map<String, Object> params = new HashMap<>(changes);
-            params.put("filmId", id);
-            databaseClient.updateDatabase(sqlStatement, params);
+            params.put("filmId", filmId);
+            databaseClient.updateDatabase(updateFilmSQLStatement, params);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\":\"Film updated successfully\"}");
         } catch (DataAccessException e) {

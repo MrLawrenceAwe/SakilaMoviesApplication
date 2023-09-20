@@ -49,13 +49,14 @@ const EditableField = ({ label, initialValue, onChange, type, options }) => {
         setHasChanged(false);
     };
 
+
     return (
         <div className="editable-field">
             <span className="field-label">{label}: </span>
             {isEditing ? (
                 <>
                     {type === "selector" ? (
-                        <select 
+                        <select
                             className="field-input"
                             value={tempValue}
                             onChange={e => {

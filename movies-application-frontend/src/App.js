@@ -11,17 +11,34 @@ function App() {
   const [error, setError] = useState(null);
   const [lastSearchQuery, setLastSearchQuery] = useState(null);
   const [showJumpButtons, setShowJumpButtons] = useState(true);
-  const [languages, setlanguages] = useState(null);
+  const [filmLanguages, setFilmLanguages] = useState(null);
+  const [filmCategories, setFilmCategories] = useState(null);
 
   const addFilmRef = React.useRef(null);
 
   FilmAPIClient.getFilmLanguages()
     .then((responseLanguages) => {
-      setlanguages(responseLanguages);
+      setFilmLanguages(responseLanguages);
     })
     .catch((error) => {
       setError(error.message);
     });
+
+  FilmAPIClient.getFilmCategories()
+    .then((responseCategories) => {
+      setFilmCategories(responseCategories);
+    })
+    .catch((error) => {
+      setError(error.message);
+    });
+
+  const currentYear = new Date().getFullYear();
+  const startYear = currentYear - 110; 
+  const endYear = currentYear + 10; 
+  const years = Array.from(
+    { length: endYear - startYear + 1 },
+    (_, i) => startYear + i
+  );
 
   function search(searchQuery) {
     FilmAPIClient.getFilmByTitle(searchQuery)
@@ -91,7 +108,9 @@ function App() {
         films={films}
         onChangesSavedToDatabase={search}
         lastSearchQuery={lastSearchQuery}
-        languages={languages}
+        languages={filmLanguages}
+        categories={filmCategories}
+        years={years}
       />
 
       {films.length > 3 && showJumpButtons && (
@@ -105,7 +124,9 @@ function App() {
 
       <CollapsibleSection label="Add Film" ref={addFilmRef}>
         <AddFilmForm
-        languages={languages}
+        languages={filmLanguages}
+        categories={filmCategories}
+        years={years}
         />
         <hr />
       </CollapsibleSection>

@@ -11,6 +11,8 @@ const FilmList = ({
   onChangesSavedToDatabase,
   lastSearchQuery,
   languages,
+  categories,
+  years
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmationModal] =
@@ -58,6 +60,9 @@ const FilmList = ({
     if (Object.keys(changes).length === 0) {
       return;
     }
+
+    changes.release_year = changes.releaseYear;
+    changes.releaseYear = undefined;
 
     FilmAPIClient.updateFilm(currentFilm.filmId, changes)
       .then(() => {
@@ -168,7 +173,10 @@ const FilmList = ({
               onChange={(newReleaseYear) =>
                 handleFieldChange("releaseYear", newReleaseYear)
               }
+              options={years}
+              type="selector"
             />
+            
             <EditableField
               label="Language"
               initialValue={currentFilm.language}
@@ -187,6 +195,15 @@ const FilmList = ({
               label="Rating"
               initialValue={currentFilm.rating}
               onChange={(newRating) => handleFieldChange("rating", newRating)}
+            />
+            <EditableField
+              label="Category"
+              initialValue={currentFilm.category}
+              onChange={(newCategory) =>
+                handleFieldChange("category", newCategory)
+              }
+              options={categories}
+              type="selector"
             />
 
             {filmHasChanges() && !editsSaved && (
