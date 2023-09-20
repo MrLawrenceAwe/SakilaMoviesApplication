@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const EditableField = ({ label, initialValue, onChange }) => {
+const EditableField = ({ label, initialValue, onChange, type, options }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(initialValue);
     const [hasChanged, setHasChanged] = useState(false);
@@ -54,11 +54,28 @@ const EditableField = ({ label, initialValue, onChange }) => {
             <span className="field-label">{label}: </span>
             {isEditing ? (
                 <>
-                    <input 
-                        className="field-input" 
-                        value={tempValue} 
-                        onChange={handleInputChange} 
-                    />
+                    {type === "selector" ? (
+                        <select 
+                            className="field-input"
+                            value={tempValue}
+                            onChange={e => {
+                                setTempValue(e.target.value);
+                                if (e.target.value !== initialValue) {
+                                    setHasChanged(true);
+                                } else {
+                                    setHasChanged(false);
+                                }
+                            }}
+                        >
+                            {options.map(option => <option key={option} value={option}>{option}</option>)}
+                        </select>
+                    ) : (
+                        <input 
+                            className="field-input" 
+                            value={tempValue} 
+                            onChange={handleInputChange} 
+                        />
+                    )}
                     <button className="save-button" onClick={handleDone} disabled={!hasChanged}>Done</button>
                     <button className="cancel-button" onClick={handleCancel}>Cancel</button>
                 </>

@@ -103,13 +103,20 @@ public class APIController {
         fieldMap.put("title", film.getTitle().toUpperCase());
         fieldMap.put("description", film.getDescription());
         fieldMap.put("release_year", film.getReleaseYear());
-        fieldMap.put("language_id", film.getLanguageId()); //TODO - Write a method to get the language id from the language name
+        fieldMap.put("language", film.getLanguage());
         fieldMap.put("original_language_id", film.getOriginalLanguageId());
         fieldMap.put("rental_duration", film.getRentalDuration());
         fieldMap.put("rental_rate", film.getRentalRate());
         fieldMap.put("length", film.getLength());
         fieldMap.put("replacement_cost", film.getReplacementCost());
         fieldMap.put("rating", film.getRating());
+
+        if (fieldMap.get("language") != null) {
+            String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
+            String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, fieldMap.get("language"), (resultSet, rowNum) -> resultSet.getString("language_id"));
+            fieldMap.put("language_id", languageId);
+            fieldMap.remove("language");
+        }
 
 
         Map<String, Object> params = new HashMap<>();
@@ -155,6 +162,13 @@ public class APIController {
         if (changes.isEmpty()) {
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\":\"No fields provided for update.\"}");
+        }
+
+        if (changes.containsKey("language")) {
+            String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
+            String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, changes.get("language"), (resultSet, rowNum) -> resultSet.getString("language_id"));
+            changes.put("language_id", languageId);
+            changes.remove("language");
         }
 
         StringJoiner setStatements = new StringJoiner(", ");
