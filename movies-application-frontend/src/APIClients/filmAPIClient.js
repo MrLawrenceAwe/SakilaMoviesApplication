@@ -114,7 +114,7 @@ export const FilmAPIClient = {
         }
     },
 
-    getFilmLangugaes: async () => {
+    getFilmLanguages: async () => {
         try {
             const response = await fetch(`${BASE_URL}/films/languages`);
             

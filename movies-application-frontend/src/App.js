@@ -11,10 +11,17 @@ function App() {
   const [error, setError] = useState(null);
   const [lastSearchQuery, setLastSearchQuery] = useState(null);
   const [showJumpButtons, setShowJumpButtons] = useState(true);
+  const [languages, setlanguages] = useState(null);
 
   const addFilmRef = React.useRef(null);
 
-  
+  FilmAPIClient.getFilmLanguages()
+    .then((responseLanguages) => {
+      setlanguages(responseLanguages);
+    })
+    .catch((error) => {
+      setError(error.message);
+    });
 
   function search(searchQuery) {
     FilmAPIClient.getFilmByTitle(searchQuery)
@@ -84,6 +91,7 @@ function App() {
         films={films}
         onChangesSavedToDatabase={search}
         lastSearchQuery={lastSearchQuery}
+        languages={languages}
       />
 
       {films.length > 3 && showJumpButtons && (
@@ -96,7 +104,9 @@ function App() {
       <hr />
 
       <CollapsibleSection label="Add Film" ref={addFilmRef}>
-        <AddFilmForm />
+        <AddFilmForm
+        languages={languages}
+        />
         <hr />
       </CollapsibleSection>
       {/* <CollapsibleSection label="Add Actor">

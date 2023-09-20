@@ -11,12 +11,12 @@ import {
 } from "@mui/material";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 
-const FilmForm = () => {
+const FilmForm = ({languages}) => {
   const [filmData, setFilmData] = useState({
     title: null,
     description: null,
     releaseYear: null,
-    languageId: null,
+    language: null,
     length: null,
     rating: null,
     category: null,
@@ -70,8 +70,8 @@ const FilmForm = () => {
     if (!filmData.title) {
       errors.title = "Title is required";
     }
-    if (!filmData.languageId) {
-      errors.languageId = "Language ID is required";
+    if (!filmData.language) {
+      errors.languageId = "Language is required";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -132,17 +132,25 @@ const FilmForm = () => {
         value={filmData.releaseYear || ""}
         sx={{ marginTop: 2 }}
       />
-      <TextField
-        fullWidth
-        variant="outlined"
-        name="languageId"
-        label="Language ID*"
-        onChange={handleChange}
-        value={filmData.languageId || ""}
-        sx={{ marginTop: 2 }}
-        error={!!errorFields.languageId} // check if the languageId has an error
-        helperText={errorFields.languageId} // display the error message
-      />
+      <FormControl variant="outlined" fullWidth sx={{ marginTop: 2 }}>
+        <InputLabel htmlFor="rating">Language*</InputLabel>
+      <Select
+          label="Language"
+          name="language"
+          value={filmData.language || ""}
+          onChange={handleChange}
+          error={!!errorFields.title} // check if the title has an error
+          helperText={errorFields.title} // display the error message
+        >
+          <MenuItem value="">No Language</MenuItem>
+
+          {languages.map((rating) => (
+            <MenuItem key={rating} value={rating}>
+              {rating}
+            </MenuItem>
+          ))}
+      </Select>
+      </FormControl>
       <TextField
         fullWidth
         type="number"
