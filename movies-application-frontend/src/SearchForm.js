@@ -18,14 +18,16 @@ function SearchForm({ onSearch }) {
   return (
     <Box sx={{ marginBottom: 3 }}>
       <form onSubmit={search}>
-        <TextField 
+        <TextField
+          id='searchField'
           variant="outlined" 
           fullWidth 
           value={title} 
           onChange={handleSearchValueChange} 
           label="Titles, categories"
         />
-        <Button 
+        <Button
+          id='searchButton'
           variant="contained" 
           color="primary" 
           onClick={search} 

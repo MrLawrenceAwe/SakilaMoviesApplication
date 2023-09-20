@@ -67,6 +67,33 @@ public class APIController {
         film.setLanguage(databaseClient.queryDatabaseForObject(languageSQL, new Object[]{film.getLanguageId()}, (resultSet, rowNum) -> resultSet.getString("name")));
     }
 
+    @GetMapping("/films/categories")
+    public ResponseEntity<?> getCategories() {
+        return getNamesFromTable("category");
+    }
+
+    @GetMapping("/films/languages")
+    public ResponseEntity<?> getLanguages() {
+        return getNamesFromTable("language");
+    }
+
+    private ResponseEntity<?> getNamesFromTable(String tableName) {
+        String sqlStatement = "SELECT name FROM " + tableName;
+        List<String> names = databaseClient.queryDatabaseForList(
+                sqlStatement,
+                new Object[]{},
+                (resultSet, rowNum) -> resultSet.getString("name")
+        );
+
+        if (!names.isEmpty()) {
+            return ResponseEntity.ok(names);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"No results found\"}");
+        }
+    }
+
     @PostMapping("/films/add")
     public ResponseEntity<String> addFilmToDatabase(@RequestBody Film film) {
         StringJoiner fields = new StringJoiner(", ");
