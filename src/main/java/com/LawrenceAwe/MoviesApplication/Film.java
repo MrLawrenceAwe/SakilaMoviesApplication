@@ -17,6 +17,7 @@ public class Film {
 
     private Integer releaseYear;
 
+    private String language;
     private String languageId;
 
     private String originalLanguageId;
@@ -35,14 +36,13 @@ public class Film {
 
     private Timestamp lastUpdate;
 
-    private String language;
-
     private String category;
+    private String categoryId;
 
     // Default constructor for deserialization
     public Film() {}
 
-    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String originalLanguageId, String length, String rating) {
+    public Film(int filmId, String title, String description, Integer releaseYear, String languageId, String length, String rating) {
         this.filmId = String.valueOf(filmId);
         this.title = title;
         this.description = description;
@@ -192,5 +192,9 @@ public class Film {
 
     public void setCategory(String category) {
     	this.category = category;
+    }
+
+    public String getCategoryId() {
+        return this.categoryId;
     }
 }

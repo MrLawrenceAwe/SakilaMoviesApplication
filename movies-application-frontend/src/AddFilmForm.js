@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 
-const FilmForm = ({languages}) => {
+const FilmForm = ({ languages, categories, years }) => {
   const [filmData, setFilmData] = useState({
     title: null,
     description: null,
@@ -27,7 +27,6 @@ const FilmForm = ({languages}) => {
   const [errorFields, setErrorFields] = useState({});
 
   const ratings = ["G", "PG", "PG-13", "R", "NC-17"];
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,6 +97,7 @@ const FilmForm = ({languages}) => {
       });
   }
 
+
   return (
     <Box>
       <Typography variant="h6">Add a New Film</Typography>
@@ -123,18 +123,25 @@ const FilmForm = ({languages}) => {
         value={filmData.description || ""}
         sx={{ marginTop: 2 }}
       />
-      <TextField
-        fullWidth
-        variant="outlined"
-        name="releaseYear"
-        label="Release Year"
-        onChange={handleChange}
-        value={filmData.releaseYear || ""}
-        sx={{ marginTop: 2 }}
-      />
+      <FormControl variant="outlined" fullWidth sx={{ marginTop: 2 }}>
+        <InputLabel htmlFor="releaseYear">Release Year</InputLabel>
+        <Select
+          label="Release Year"
+          name="releaseYear"
+          value={filmData.releaseYear || ""}
+          onChange={handleChange}
+        >
+          <MenuItem value="">Select Year</MenuItem>
+          {years.map((year) => (
+            <MenuItem key={year} value={year}>
+              {year}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <FormControl variant="outlined" fullWidth sx={{ marginTop: 2 }}>
         <InputLabel htmlFor="rating">Language*</InputLabel>
-      <Select
+        <Select
           label="Language"
           name="language"
           value={filmData.language || ""}
@@ -144,12 +151,12 @@ const FilmForm = ({languages}) => {
         >
           <MenuItem value="">No Language</MenuItem>
 
-          {languages.map((rating) => (
-            <MenuItem key={rating} value={rating}>
-              {rating}
+          {languages.map((language) => (
+            <MenuItem key={language} value={language}>
+              {language}
             </MenuItem>
           ))}
-      </Select>
+        </Select>
       </FormControl>
       <TextField
         fullWidth
@@ -182,17 +189,23 @@ const FilmForm = ({languages}) => {
           ))}
         </Select>
       </FormControl>
-      <TextField
-        fullWidth
-        variant="outlined"
-        name="category"
-        label="Category"
-        onChange={handleChange}
-        value={filmData.category || ""}
-        sx={{ marginTop: 2 }}
-        error={!!errorFields.category} // check if the title has an error
-        helperText={errorFields.category} // display the error message
-      />
+      <FormControl variant="outlined" fullWidth sx={{ marginTop: 2 }}>
+        <InputLabel htmlFor="rating">Category</InputLabel>
+        <Select
+          label="Category"
+          name="category"
+          value={filmData.category || ""}
+          onChange={handleChange}
+        >
+          <MenuItem value="">No Category</MenuItem>
+
+          {categories.map((category) => (
+            <MenuItem key={category} value={category}>
+              {category}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       <Button
         variant="contained"
