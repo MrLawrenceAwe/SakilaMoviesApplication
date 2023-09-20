@@ -94,6 +94,42 @@ export const FilmAPIClient = {
             console.error(error);
             throw error;
         }
+    },
+
+    getFilmCategories: async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/films/categories`);
+            
+            const responseBody = await response.json();
+            
+            if (!response.ok) {
+                const errorMessage = responseBody.message || 'Failed to fetch film categories';
+                throw new Error(errorMessage);
+            }
+            
+            return responseBody;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    },
+
+    getFilmLangugaes: async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/films/languages`);
+            
+            const responseBody = await response.json();
+            
+            if (!response.ok) {
+                const errorMessage = responseBody.message || 'Failed to fetch film languages';
+                throw new Error(errorMessage);
+            }
+            
+            return responseBody;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
 }

@@ -12,10 +12,10 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
     const [currentFilm, setCurrentFilm] = useState(null);
     const [originalFilm, setOriginalFilm] = useState(null);
     const [editsSaved, setEditsSaved] = useState(false);
-    // Separate feedback for edit modal
+    // feedback for edit modal
     const [filmViewFeedbackMessage, setEditFeedbackMessage] = useState(null);
     const [filmViewFeedbackType, setEditFeedbackType] = useState(null); // "success" or "error"
-    // Separate feedback for delete modal
+    // feedback for delete modal
     const [deleteFeedbackMessage, setDeleteFeedbackMessage] = useState(null);
     const [deleteFeedbackType, setDeleteFeedbackType] = useState(null); // "success" or "error"
 
@@ -48,7 +48,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
     };
     
 
-    const handleEditSave = () => {
+    const handleEditSaveToDatabase = () => {
         const changes = getChanges();
 
         if (Object.keys(changes).length === 0) {
@@ -76,7 +76,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
             });
     };
     
-    const handleCloseModal = () => {
+    const hideModalThenSetModalFeedbackMessagesToNull = () => {
         setShowModal(false);
         setEditFeedbackMessage(null);
         setDeleteFeedbackMessage(null);
@@ -86,7 +86,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
         FilmAPIClient.deleteFilm(currentFilm.filmId)
             .then(() => {
                 setShowDeleteConfirmationModal(false);
-                handleCloseModal();
+                hideModalThenSetModalFeedbackMessagesToNull();
                 onChangesSavedToDatabase(lastSearchQuery);
             })
             .catch(error => {
@@ -105,7 +105,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
         <div>
             {/* List of Films */}
             {films && films.length > 0 && (
-                <div>
+                <div id='film-list'>
                     <h2>Films</h2>
                     {films.map(film => (
                         <div key={film.film_id} className="film-item">
@@ -138,7 +138,7 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
             )} */}
 
             {/* Film View Modal */}
-            <Modal show={showModal} onClose={handleCloseModal}>
+            <Modal show={showModal} onClose={hideModalThenSetModalFeedbackMessagesToNull}>
                 {currentFilm && (
                     <>
                         <h3>{currentFilm.title}</h3>
@@ -173,8 +173,8 @@ const FilmList = ({ films, actors, onChangesSavedToDatabase, lastSearchQuery }) 
                             onChange={newRating => handleFieldChange('rating', newRating)}
                         />
 
-                        {filmHasChanges() && !editsSaved && <button className="modal-button" onClick={handleEditSave}>Save</button>}
-                        <button onClick={handleCloseModal} style={{ marginBottom: '20px' }}>Close</button>
+                        {filmHasChanges() && !editsSaved && <button className="modal-button" onClick={handleEditSaveToDatabase}>Save</button>}
+                        <button onClick={hideModalThenSetModalFeedbackMessagesToNull} style={{ marginBottom: '20px' }}>Close</button>
                         {filmViewFeedbackMessage && <div className={`feedback-message feedback-${filmViewFeedbackType}`}>{filmViewFeedbackMessage}</div>}
                     </>
                 )}
