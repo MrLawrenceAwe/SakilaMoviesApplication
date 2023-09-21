@@ -11,22 +11,22 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
         const newValue = e.target.value;
         switch (label) {
             case "Title":
-              if (newValue.length > 255) return;
-              break;
+                if (newValue.length > 255) return;
+                break;
             case "Description":
-              if (newValue.length > 65_535) return;
-              break;
+                if (newValue.length > 65_535) return;
+                break;
             case "Release Year":
-              console.log(newValue);
-              if (isNaN(newValue) || newValue < 0) return;
-              break;
+            case "Length (minutes)":
+                if (isNaN(newValue) || newValue < 0) return;
+                break;
             case "Language ID":
             case "Original Language ID":
-              if (isNaN(newValue) || newValue < 0) return;
-              break;
+                if (isNaN(newValue) || newValue < 0) return;
+                break;
             default:
-              break;
-          }
+                break;
+        }
 
         setTempValue(newValue);
 
@@ -40,21 +40,21 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
     const handleDone = () => {
         onChange(tempValue);
         setIsEditing(false);
-        setHasChanged(false); 
+        setHasChanged(false);
     };
 
     const handleCancel = () => {
-        setTempValue(initialValue); 
-        setIsEditing(false); 
+        setTempValue(initialValue);
+        setIsEditing(false);
         setHasChanged(false);
     };
 
     useEffect(() => {
         if (onEditModeChange) {
-          onEditModeChange(isEditing);
+            onEditModeChange(isEditing);
         }
-      }, [isEditing, onEditModeChange]);
-      
+    }, [isEditing, onEditModeChange]);
+
 
 
     return (
@@ -78,11 +78,21 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
                             {options.map(option => <option key={option} value={option}>{option}</option>)}
                         </select>
                     ) : (
-                        <input 
-                            className="field-input" 
-                            value={tempValue} 
-                            onChange={handleInputChange} 
-                        />
+                        (label === "Length (minutes)") ? (
+                            <input
+                                className="field-input"
+                                type="number"
+                                value={tempValue}
+                                onChange={handleInputChange}
+                                min="0"
+                            />
+                        ) : (
+                            <input
+                                className="field-input"
+                                value={tempValue}
+                                onChange={handleInputChange}
+                            />
+                        )
                     )}
                     <button className="done-button" onClick={handleDone} disabled={!hasChanged}>Done</button>
                     <button className="cancel-button" onClick={handleCancel}>Cancel</button>

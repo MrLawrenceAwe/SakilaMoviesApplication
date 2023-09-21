@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { FilmAPIClient } from "./APIClients/FilmAPIClient";
 
-const FilmForm = ({ languages, categories, years }) => {
+const FilmForm = ({ languages, categories, years, ratings }) => {
   const [filmData, setFilmData] = useState({
     title: null,
     description: null,
@@ -25,8 +25,6 @@ const FilmForm = ({ languages, categories, years }) => {
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [feedbackType, setFeedbackType] = useState(null);
   const [errorFields, setErrorFields] = useState({});
-
-  const ratings = ["G", "PG", "PG-13", "R", "NC-17"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
