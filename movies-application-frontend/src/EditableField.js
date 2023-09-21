@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const EditableField = ({ label, initialValue, onChange, type, options }) => {
+const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, options }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(initialValue);
     const [hasChanged, setHasChanged] = useState(false);
@@ -49,6 +49,13 @@ const EditableField = ({ label, initialValue, onChange, type, options }) => {
         setHasChanged(false);
     };
 
+    useEffect(() => {
+        if (onEditModeChange) {
+          onEditModeChange(isEditing);
+        }
+      }, [isEditing, onEditModeChange]);
+      
+
 
     return (
         <div className="editable-field">
@@ -77,7 +84,7 @@ const EditableField = ({ label, initialValue, onChange, type, options }) => {
                             onChange={handleInputChange} 
                         />
                     )}
-                    <button className="save-button" onClick={handleDone} disabled={!hasChanged}>Done</button>
+                    <button className="done-button" onClick={handleDone} disabled={!hasChanged}>Done</button>
                     <button className="cancel-button" onClick={handleCancel}>Cancel</button>
                 </>
             ) : (
