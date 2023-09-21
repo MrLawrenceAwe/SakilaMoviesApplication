@@ -6,10 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
@@ -87,6 +85,13 @@ public class APIController {
     }
 
     private ResponseEntity<?> getNamesFromTable(String tableName) {
+        List<String> validTableNames = Arrays.asList("category", "language");
+        if (!validTableNames.contains(tableName)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\":\"Invalid table name\"}");
+        }
+
         String sqlStatement = "SELECT name FROM " + tableName;
         List<String> names = databaseClient.queryDatabaseForList(
                 sqlStatement,
@@ -112,11 +117,9 @@ public class APIController {
         fieldMap.put("title", film.getTitle().toUpperCase());
         fieldMap.put("description", film.getDescription());
         fieldMap.put("release_year", film.getReleaseYear());
-        if (film.getLanguage() != null) {
-            String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
-            String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, film.getLanguage(), (resultSet, rowNum) -> resultSet.getString("language_id"));
-            fieldMap.put("language_id", languageId);
-        }
+        String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
+        String languageId = databaseClient.queryDatabaseForObject(getLanguageIDSQLStatement, film.getLanguage(), (resultSet, rowNum) -> resultSet.getString("language_id"));
+        fieldMap.put("language_id", languageId);
         fieldMap.put("length", film.getLength());
         fieldMap.put("rating", film.getRating());
 
