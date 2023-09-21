@@ -39,9 +39,6 @@ const FilmForm = ({ languages, categories, years, ratings }) => {
       case "releaseYear":
         if (isNaN(value) || value < 0) return;
         break;
-      case "length":
-        if (isNaN(value) || value < 0) return;
-        break;
       case "rating":
         if (value !== "" && !ratings.includes(value)) return;
         break;
@@ -59,6 +56,12 @@ const FilmForm = ({ languages, categories, years, ratings }) => {
         ...prevErrors,
         [name]: null,
       }));
+    }
+  };
+
+  const preventInvalidNumberChars = (e) => {
+    if (e.key === 'e' || e.key === '.' || e.key === '-' || e.key === '+') {
+      e.preventDefault();
     }
   };
 
@@ -161,6 +164,7 @@ const FilmForm = ({ languages, categories, years, ratings }) => {
         name="length"
         label="Length (minutes)"
         onChange={handleChange}
+        onKeyDown={preventInvalidNumberChars}
         value={filmData.length || ""}
         sx={{ marginTop: 2 }}
       />
