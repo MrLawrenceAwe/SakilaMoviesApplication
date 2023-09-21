@@ -149,8 +149,6 @@ const FilmForm = ({ languages, categories, years }) => {
           error={!!errorFields.title} // check if the title has an error
           helperText={errorFields.title} // display the error message
         >
-          <MenuItem value="">No Language</MenuItem>
-
           {languages.map((language) => (
             <MenuItem key={language} value={language}>
               {language}
