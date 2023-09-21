@@ -194,11 +194,9 @@ public class APIController {
 
         StringJoiner setStatements = new StringJoiner(", ");
 
-        for (Map.Entry<String, Object> entry : changes.entrySet()) {
-            if (entry.getValue() != null) {
+        for (Map.Entry<String, Object> entry : changes.entrySet())
+            if (entry.getValue() != null)
                 setStatements.add(entry.getKey() + "=:" + entry.getKey());
-            }
-        }
 
         String updateFilmSQLStatement = String.format("UPDATE film SET %s WHERE film_id=:filmId", setStatements.toString());
 

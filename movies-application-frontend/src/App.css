@@ -189,9 +189,9 @@ hr {
   color: #fff;
 }
 
-.save-button,
+.done-button,
 .cancel-button,
-.save-button:hover,
+.done-button:hover,
 .cancel-button:hover {
     background-color: #d4d4d4;
     border: none;
@@ -202,12 +202,12 @@ hr {
     transition: background-color 0.2s;
 }
 
-.save-button:hover,
+.done-button:hover,
 .cancel-button:hover {
   background-color: #bfbfbf;
 }
 
-.save-button:disabled {
+.done-button:disabled {
   background-color: #f0f0f0;
   cursor: not-allowed;
 }

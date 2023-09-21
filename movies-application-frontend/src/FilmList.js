@@ -26,6 +26,8 @@ const FilmList = ({
   // feedback for delete modal
   const [deleteFeedbackMessage, setDeleteFeedbackMessage] = useState(null);
   const [deleteFeedbackType, setDeleteFeedbackType] = useState(null); // "success" or "error"
+  const [isAnyFieldInEditMode, setIsAnyFieldInEditMode] = useState(false);
+
 
   const handleFilmTitleClick = (film) => {
     setCurrentFilm({ ...film });
@@ -166,6 +168,7 @@ const FilmList = ({
               label="Description"
               initialValue={currentFilm.description}
               onChange={(newDesc) => handleFieldChange("description", newDesc)}
+              onEditModeChange={setIsAnyFieldInEditMode}
             />
             <EditableField
               label="Release Year"
@@ -173,6 +176,7 @@ const FilmList = ({
               onChange={(newReleaseYear) =>
                 handleFieldChange("releaseYear", newReleaseYear)
               }
+              onEditModeChange={setIsAnyFieldInEditMode}
               options={years}
               type="selector"
             />
@@ -183,22 +187,26 @@ const FilmList = ({
               onChange={(newLanguage) =>
                 handleFieldChange("language", newLanguage)
               }
+              onEditModeChange={setIsAnyFieldInEditMode}
               options={languages}
               type="selector"
             />
             <EditableField
               label="Length (minutes)"
               initialValue={currentFilm.length}
+              onEditModeChange={setIsAnyFieldInEditMode}
               onChange={(newLength) => handleFieldChange("length", newLength)}
             />
             <EditableField
               label="Rating"
               initialValue={currentFilm.rating}
+              onEditModeChange={setIsAnyFieldInEditMode}
               onChange={(newRating) => handleFieldChange("rating", newRating)}
             />
             <EditableField
               label="Category"
               initialValue={currentFilm.category}
+              onEditModeChange={setIsAnyFieldInEditMode}
               onChange={(newCategory) =>
                 handleFieldChange("category", newCategory)
               }
@@ -206,8 +214,9 @@ const FilmList = ({
               type="selector"
             />
 
-            {filmHasChanges() && !editsSaved && (
+            {filmHasChanges() && !editsSaved && !isAnyFieldInEditMode && (
               <button
+                id="save-changes-btn"
                 className="modal-button"
                 onClick={handleEditSaveToDatabase}
               >
