@@ -3,7 +3,6 @@ package com.LawrenceAwe.MoviesApplication;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.LawrenceAwe.MoviesApplication.DatabaseClient;
 
 public class FilmService {
     public static Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
