@@ -17,9 +17,6 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
                 if (newValue.length > 65_535) return;
                 break;
             case "Release Year":
-            case "Length (minutes)":
-                if (isNaN(newValue) || newValue < 0) return;
-                break;
             case "Language ID":
             case "Original Language ID":
                 if (isNaN(newValue) || newValue < 0) return;
@@ -36,6 +33,12 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
             setHasChanged(false);
         }
     }
+
+    const preventInvalidNumberChars = (e) => {
+        if (e.key === 'e' || e.key === '.' || e.key === '-' || e.key === '+') {
+          e.preventDefault();
+        }
+      };
 
     const handleDone = () => {
         onChange(tempValue);
@@ -84,6 +87,7 @@ const EditableField = ({ label, initialValue, onChange, onEditModeChange, type, 
                                 type="number"
                                 value={tempValue}
                                 onChange={handleInputChange}
+                                onKeyDown={preventInvalidNumberChars}
                                 min="0"
                             />
                         ) : (
