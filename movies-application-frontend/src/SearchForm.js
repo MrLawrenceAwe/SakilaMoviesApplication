@@ -12,7 +12,7 @@ function SearchForm({ onSearch }) {
     e.preventDefault();
     if (title === '') return;
 
-    onSearch(title);
+    onSearch(title.trim());
   }
 
   return (
