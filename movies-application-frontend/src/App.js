@@ -14,6 +14,8 @@ function App() {
   const [filmLanguages, setFilmLanguages] = useState(null);
   const [filmCategories, setFilmCategories] = useState(null);
 
+  const ratings = ["G", "PG", "PG-13", "R", "NC-17"];
+
   const addFilmRef = React.useRef(null);
 
   FilmAPIClient.getFilmLanguages()
@@ -111,6 +113,7 @@ function App() {
         languages={filmLanguages}
         categories={filmCategories}
         years={years}
+        ratings={ratings}
       />
 
       {films.length > 3 && showJumpButtons && (
@@ -127,6 +130,7 @@ function App() {
         languages={filmLanguages}
         categories={filmCategories}
         years={years}
+        ratings={ratings}
         />
         <hr />
       </CollapsibleSection>

@@ -12,7 +12,8 @@ const FilmList = ({
   lastSearchQuery,
   languages,
   categories,
-  years
+  years,
+  ratings
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmationModal] =
@@ -202,6 +203,8 @@ const FilmList = ({
               initialValue={currentFilm.rating}
               onEditModeChange={setIsAnyFieldInEditMode}
               onChange={(newRating) => handleFieldChange("rating", newRating)}
+              options={ratings}
+              type="selector"
             />
             <EditableField
               label="Category"
