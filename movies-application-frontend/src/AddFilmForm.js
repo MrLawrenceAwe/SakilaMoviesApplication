@@ -9,7 +9,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { FilmAPIClient } from "./APIClients/FilmAPIClient";
+import { FilmAPIClient } from "./APIClients/FilmAPIClient.js";
 
 const FilmForm = ({ languages, categories, years, ratings }) => {
   const [filmData, setFilmData] = useState({

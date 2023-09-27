@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import FilmList from "./FilmList";
 import AddFilmForm from "./AddFilmForm";
-import { FilmAPIClient } from "./APIClients/FilmAPIClient";
+import { FilmAPIClient } from "./APIClients/FilmAPIClient.js";
 import CollapsibleSection from "./CollapsibleSection";
 import SearchForm from "./SearchForm";
 
