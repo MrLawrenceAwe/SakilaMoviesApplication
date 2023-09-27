@@ -3,7 +3,7 @@ import Modal from "./Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import EditableField from "./EditableField";
-import { FilmAPIClient } from "./APIClients/FilmAPIClient";
+import { FilmAPIClient } from "./APIClients/FilmAPIClient.js";
 
 const FilmList = ({
   films,

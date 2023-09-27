@@ -44,12 +44,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.hubspot.jinjava</groupId>
-			<artifactId>jinjava</artifactId>
-			<version>2.7.1</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
@@ -61,6 +55,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<classifier>runtime</classifier>
+			<version>0.8.7</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -69,7 +70,21 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version> <!-- Use the latest version -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<!-- other executions can be added here if needed -->
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
+	<packaging>jar</packaging>
 </project>

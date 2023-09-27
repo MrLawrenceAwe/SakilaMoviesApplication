@@ -29,8 +29,13 @@ public class APIController {
         Film film = databaseClient.queryDatabaseForObject(sql, new Object[]{title}, FilmService::mapRowToFilm);
 
         if (film != null) {
-            film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
-            film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
+            if (film.getLanguageId() != null) {
+                film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
+            }
+
+            if (film.getFilmId() != null) {
+                film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
+            }
             return ResponseEntity.ok(film);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -56,8 +61,13 @@ public class APIController {
 
         List<Film> films = databaseClient.queryDatabaseForList(sqlStatement, new Object[]{categoryName}, FilmService::mapRowToFilm);
         for (Film film : films) {
-            film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
-            film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
+            if (film.getLanguageId() != null) {
+                film.setLanguage(getFilmLanguage(Integer.parseInt(film.getLanguageId())));
+            }
+
+            if (film.getFilmId() != null) {
+                film.setCategory(getFilmCategory(Integer.parseInt(film.getFilmId())));
+            }
         }
 
         if (!films.isEmpty()) {
@@ -69,7 +79,7 @@ public class APIController {
         }
     }
 
-    private String getFilmLanguage(int languageId) {
+    String getFilmLanguage(int languageId) {
         String languageSQL = "SELECT name FROM language WHERE language_id = ?";
         return databaseClient.queryDatabaseForObject(languageSQL, new Object[]{languageId}, (resultSet, rowNum) -> resultSet.getString("name"));
     }
@@ -85,13 +95,6 @@ public class APIController {
     }
 
     private ResponseEntity<?> getNamesFromTable(String tableName) {
-        List<String> validTableNames = Arrays.asList("category", "language");
-        if (!validTableNames.contains(tableName)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\":\"Invalid table name\"}");
-        }
-
         String sqlStatement = "SELECT name FROM " + tableName;
         List<String> names = databaseClient.queryDatabaseForList(
                 sqlStatement,
