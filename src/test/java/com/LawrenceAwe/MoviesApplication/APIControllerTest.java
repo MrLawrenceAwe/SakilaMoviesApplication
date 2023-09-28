@@ -3,9 +3,11 @@ package com.LawrenceAwe.MoviesApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.web.servlet.MockMvc;
@@ -269,5 +271,255 @@ public class APIControllerTest {
         assertEquals(mockLanguageName, result);
     }
 
+    @Test
+    public void testAddFilmToDatabase_DataAccessException() throws Exception {
+        // Sample film data to use in the test
+        Film sampleFilm = new Film();
+        sampleFilm.setTitle("Test Movie");
+        sampleFilm.setDescription("A test movie for unit testing");
+        sampleFilm.setReleaseYear(2023);
+        sampleFilm.setLanguage("English");
+        sampleFilm.setLength("120");
+        sampleFilm.setRating("PG-13");
+        sampleFilm.setCategory("Action");
 
+        String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
+        String languageId = "1"; // Sample language ID for the test
+
+        // When querying for the language ID, return the sample language ID
+        when(databaseClient.queryDatabaseForObject(eq(getLanguageIDSQLStatement), eq(sampleFilm.getLanguage()), any())).thenReturn(languageId);
+
+        // Make the databaseClient.updateDatabase() method throw a DataAccessException
+        doThrow(new DataAccessException("Test exception") {}).when(databaseClient).updateDatabase(anyString(), anyMap());
+
+        // Convert the Film object to JSON using Jackson's ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+        String filmJson = objectMapper.writeValueAsString(sampleFilm);
+
+        // Make a POST request to add the film
+        mockMvc.perform(post("/api/films/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(filmJson))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Failed to create film"));
+
+        // Verify that the databaseClient.updateDatabase() method was called
+        verify(databaseClient, times(1)).updateDatabase(anyString(), anyMap());
+    }
+
+    @Test
+    public void testUpdateFilmCategory_Success() throws Exception {
+        // Mocks
+        String getCategoryIDSQLStatement = "SELECT category_id FROM category WHERE name = ?";
+        when(databaseClient.queryDatabaseForObject(eq(getCategoryIDSQLStatement), any(), ArgumentMatchers.any())).thenReturn("1");
+
+        String deleteFilmCategoryRelationSQLStatement = "DELETE FROM film_category WHERE film_id=:filmId";
+        String addFilmCategoryRelationSQLStatement = "INSERT INTO film_category (film_id, category_id) VALUES (:filmId, :categoryId)";
+        when(databaseClient.updateDatabase(eq(deleteFilmCategoryRelationSQLStatement), any())).thenReturn(1);
+        when(databaseClient.updateDatabase(eq(addFilmCategoryRelationSQLStatement), any())).thenReturn(1);
+
+        // Test data
+        Long filmId = 123L;
+        Map<String, Object> changes = new HashMap<>();
+        changes.put("category", "Action");
+        String changesJson = new ObjectMapper().writeValueAsString(changes);
+
+        // Perform test
+        mockMvc.perform(put("/api/films/update/" + filmId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(changesJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Film updated successfully"));
+
+    }
+
+    @Test
+    public void testUpdateFilmInDatabaseByID_DataAccessException() throws Exception {
+        // Given: a film update request
+        Long filmId = 1L;
+        Map<String, Object> changes = new HashMap<>();
+        changes.put("title", "Updated Title");
+
+        // When: updating the film causes a DataAccessException
+        String updateFilmSQLStatement = "UPDATE film SET title=:title WHERE film_id=:filmId";
+        Map<String, Object> params = new HashMap<>(changes);
+        params.put("filmId", filmId);
+
+        doThrow(new DataAccessException("Test Exception") {}).when(databaseClient).updateDatabase(updateFilmSQLStatement, params);
+
+        // Then: the API should return an INTERNAL_SERVER_ERROR with an appropriate message
+        String filmJson = "{\"title\":\"Updated Title\"}";
+
+        mockMvc.perform(put("/api/films/update/" + filmId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(filmJson))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Failed to update film"));
+
+        verify(databaseClient, times(1)).updateDatabase(updateFilmSQLStatement, params);
+    }
+
+    @Test
+    public void testDeleteFilmInDatabaseByID_ThrowsDataAccessException() throws Exception {
+        // Given
+        String deleteRentalsSQLStatement = "DELETE FROM rental WHERE inventory_id IN (SELECT inventory_id FROM inventory WHERE film_id=:filmId)";
+        Map<String, Object> params = new HashMap<>();
+        params.put("filmId", 123L);  // Example filmId for testing purposes
+
+        // Mock the DatabaseClient to throw a DataAccessException when updateDatabase is called
+        doThrow(new DataAccessException("Test Exception") {}).when(databaseClient).updateDatabase(eq(deleteRentalsSQLStatement), eq(params));
+
+        // Perform the DELETE request
+        mockMvc.perform(delete("/api/films/delete/123"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Failed to delete film"));
+
+        verify(databaseClient, times(1)).updateDatabase(eq(deleteRentalsSQLStatement), eq(params));
+    }
+
+    @Test
+    public void testUpdateFilmLanguage_Success() throws Exception {
+        Long filmId = 1L;
+        String languageName = "English";
+        String languageId = "5";
+
+        String requestBody = "{\"language\":\"" + languageName + "\"}";
+
+        String getLanguageIDSQLStatement = "SELECT language_id FROM language WHERE name = ?";
+        when(databaseClient.queryDatabaseForObject(eq(getLanguageIDSQLStatement), eq(languageName), any()))
+                .thenReturn(languageId);
+
+        String updateFilmSQLStatement = "UPDATE film SET language_id=:language_id WHERE film_id=:filmId";
+        Map<String, Object> params = new HashMap<>();
+        params.put("filmId", filmId);
+        params.put("language_id", languageId);
+        when(databaseClient.updateDatabase(updateFilmSQLStatement, params)).thenReturn(1);
+
+        mockMvc.perform(put("/api/films/update/" + filmId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Film updated successfully"));
+
+        verify(databaseClient, times(1)).queryDatabaseForObject(eq(getLanguageIDSQLStatement), eq(languageName), any());
+        verify(databaseClient, times(1)).updateDatabase(updateFilmSQLStatement, params);
+    }
+
+    @Test
+    public void testUpdateFilmWithEmptyChanges() throws Exception {
+        // Given
+        Long filmId = 123L;
+        String emptyChanges = "{}";
+        // When & Then
+        mockMvc.perform(put("/api/films/update/" + filmId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(emptyChanges))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("No fields provided for update."));
+
+        // Verify
+        verify(databaseClient, times(0)).updateDatabase(anyString(), anyMap()); // Ensure no DB operation took place
+    }
+
+    @Test
+    public void testGetFilmsByCategory_HappyPath() throws Exception {
+        // Sample film for testing
+        Film sampleFilm = new Film();
+        sampleFilm.setFilmId(1);
+        sampleFilm.setTitle("Sample Film");
+        sampleFilm.setLanguageId("1");
+
+        // Assuming these are your actual methods to fetch language and category. Mock their responses.
+        when(apiController.getFilmLanguage(1)).thenReturn("English");
+        when(apiController.getFilmCategory(1)).thenReturn("Action");
+
+        // Mock database client's queryDatabaseForList to return a list containing the sample film
+        when(databaseClient.queryDatabaseForList(anyString(), any(), any())).thenReturn(Collections.singletonList(sampleFilm));
+
+        mockMvc.perform(get("/api/films/category/action"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Sample Film"))
+                .andExpect(jsonPath("$[0].language").value("English"))
+                .andExpect(jsonPath("$[0].category").value("Action"));
+
+    }
+
+    @Test
+    public void testGetFilmsByCategory_NoLanguageId() throws Exception {
+        Film sampleFilm = new Film();
+        sampleFilm.setFilmId(1);
+        sampleFilm.setTitle("Sample Film");
+
+        when(databaseClient.queryDatabaseForList(anyString(), any(), any())).thenReturn(Collections.singletonList(sampleFilm));
+        when(apiController.getFilmCategory(1)).thenReturn("Action");
+
+        mockMvc.perform(get("/api/films/category/action"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Sample Film"))
+                .andExpect(jsonPath("$[0].language").doesNotExist())
+                .andExpect(jsonPath("$[0].category").value("Action"));
+    }
+
+    @Test
+    public void testGetFilmsByCategory_NoFilmsFound() throws Exception {
+        when(databaseClient.queryDatabaseForList(anyString(), any(), any())).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/films/category/nonexistent-category"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("No results found"));
+    }
+
+    @Test
+    public void testGetFilmByTitle_FilmFoundWithLanguageId() throws Exception {
+        String title = "TestFilm";
+        String testLanguage = "English";
+
+        Film mockFilm = new Film();
+        mockFilm.setTitle(title);
+        mockFilm.setLanguageId("1");
+
+        when(databaseClient.queryDatabaseForObject(
+                anyString(),
+                eq(new Object[]{title}),
+                any(RowMapper.class)
+        )).thenReturn(mockFilm);
+
+        when(apiController.getFilmLanguage(1)).thenReturn(testLanguage);
+
+        mockMvc.perform(get("/api/films/" + title))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(title))
+                .andExpect(jsonPath("$.language").value(testLanguage));
+
+    }
+
+    @Test
+    public void testGetFilmByTitle_FilmFoundWithFilmId() throws Exception {
+        String title = "TestFilm";
+        String testCategory = "Action";
+        Film mockFilm = new Film();
+        mockFilm.setTitle(title);
+        mockFilm.setFilmId(123);
+
+        when(databaseClient.queryDatabaseForObject(
+                anyString(),
+                eq(new Object[]{title}),
+                any(RowMapper.class)
+        )).thenReturn(mockFilm);
+
+        when(apiController.getFilmCategory(123)).thenReturn(testCategory);
+
+        mockMvc.perform(get("/api/films/"+title))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(title))
+                .andExpect(jsonPath("$.category").value(testCategory));
+
+    }
 }
