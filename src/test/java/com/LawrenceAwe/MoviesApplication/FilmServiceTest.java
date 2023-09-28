@@ -21,7 +21,6 @@ class FilmServiceTest {
 
     @Test
     void testMapRowToFilm() throws SQLException {
-        // Mock the result set values
         when(mockResultSet.getInt("film_id")).thenReturn(1);
         when(mockResultSet.getString("title")).thenReturn("Test Movie");
         when(mockResultSet.getString("description")).thenReturn("A test movie");
@@ -30,10 +29,8 @@ class FilmServiceTest {
         when(mockResultSet.getString("length")).thenReturn("120");
         when(mockResultSet.getString("rating")).thenReturn("PG");
 
-        // Call the method to test
         Film film = FilmService.mapRowToFilm(mockResultSet, 1);
 
-        // Assertions to validate the results
         assertEquals("1", film.getFilmId());
         assertEquals("Test Movie", film.getTitle());
         assertEquals("A test movie", film.getDescription());
