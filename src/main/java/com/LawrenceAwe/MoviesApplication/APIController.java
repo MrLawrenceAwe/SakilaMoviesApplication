@@ -45,7 +45,7 @@ public class APIController {
 
     }
 
-    private String getFilmCategory(int filmId) {
+    String getFilmCategory(int filmId) {
         String sqlStatement = "SELECT name FROM category WHERE category_id IN (SELECT category_id FROM film_category WHERE film_id = ?)";
         return databaseClient.queryDatabaseForObject(sqlStatement, new Object[]{filmId}, (resultSet, rowNum) -> resultSet.getString("name"));
     }
