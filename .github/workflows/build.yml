@@ -1,37 +1,39 @@
-name: SonarCloud
+name: CI
+
 on:
   push:
-    branches:
-      - main
   pull_request:
-    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build and analyze
+  java:
+    name: Java tests and build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+      - name: Verify tests and package
+        run: mvn -B verify
+
+  frontend:
+    name: React tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: movies-application-frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MrLawrenceAwe_SakilaMoviesApplication
+          node-version: 22
+          cache: npm
+          cache-dependency-path: movies-application-frontend/package-lock.json
+      - run: npm ci
+      - run: npm test -- --watchAll=false
+      - run: npm run build

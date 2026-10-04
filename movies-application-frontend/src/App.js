@@ -18,21 +18,22 @@ function App() {
 
   const addFilmRef = React.useRef(null);
 
-  FilmAPIClient.getFilmLanguages()
-    .then((responseLanguages) => {
-      setFilmLanguages(responseLanguages);
-    })
-    .catch((error) => {
-      setError(error.message);
-    });
-
-  FilmAPIClient.getFilmCategories()
-    .then((responseCategories) => {
-      setFilmCategories(responseCategories);
-    })
-    .catch((error) => {
-      setError(error.message);
-    });
+  React.useEffect(() => {
+    let active = true;
+    Promise.all([
+      FilmAPIClient.getFilmLanguages(),
+      FilmAPIClient.getFilmCategories(),
+    ])
+      .then(([languages, categories]) => {
+        if (!active) return;
+        setFilmLanguages(languages);
+        setFilmCategories(categories);
+      })
+      .catch((error) => {
+        if (active) setError(error.message);
+      });
+    return () => { active = false; };
+  }, []);
 
   const currentYear = new Date().getFullYear();
   const startYear = currentYear - 110; 
