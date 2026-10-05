@@ -1,6 +1,6 @@
 # Sakila Movies Application
 
-[![CI](https://github.com/MrLawrenceAwe/SakilaMoviesApplication/actions/workflows/build.yml/badge.svg)](https://github.com/MrLawrenceAwe/SakilaMoviesApplication/actions/workflows/build.yml)
+[![CI](https://github.com/MrLawrenceAwe/SakilaMoviesApplication/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/MrLawrenceAwe/SakilaMoviesApplication/actions/workflows/build.yml)
 
 A full-stack application for searching, browsing, adding, and updating records from the Sakila movie database.
 
